@@ -5,33 +5,39 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<VBox alignment="CENTER" prefHeight="760.0" prefWidth="781.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp20050.hexagonalboard.HelloController">
+<VBox alignment="CENTER" prefHeight="1000.0" prefWidth="1000.0" spacing="200.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp20050.hexagonalboard.HelloController">
 
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-    <Pane fx:id="hexBoardPane" prefHeight="500.0" prefWidth="500.0">
 
 
-   <Polygon fx:id = "hexPrototype" fill="#ff861f" layoutX="94.0" layoutY="80.0">
-      <points>
-         <Double fx:value="0.0" />
-         <Double fx:value="-50.0" />
-         <Double fx:value="45" />
-         <Double fx:value="-25.0" />
-         <Double fx:value="45" />
-         <Double fx:value="25.0" />
-         <Double fx:value="0.0" />
-         <Double fx:value="50.0" />
-         <Double fx:value="-45" />
-         <Double fx:value="25.0" />
-         <Double fx:value="-45" />
-         <Double fx:value="-25.0" />
-      </points>
-   </Polygon>
-    </Pane>
+    <Polygon fx:id="hexPrototype" fill="#c46313" rotate="90.0" visible="false" >
 
 
+    <points>
+      <Double fx:value="0.0" />
+      <Double fx:value="-50.0" />
+      <Double fx:value="45" />
+      <Double fx:value="-25.0" />
+      <Double fx:value="45" />
+      <Double fx:value="25.0" />
+      <Double fx:value="0.0" />
+      <Double fx:value="50.0" />
+      <Double fx:value="-45" />
+      <Double fx:value="25.0" />
+      <Double fx:value="-45" />
+      <Double fx:value="-25.0" />
+   </points>
+</Polygon>
+    <Pane fx:id="hexBoardPane" prefHeight="500.0" prefWidth="500.0" />
+
+
+
+
+
+
+</VBox>
 
 
 
