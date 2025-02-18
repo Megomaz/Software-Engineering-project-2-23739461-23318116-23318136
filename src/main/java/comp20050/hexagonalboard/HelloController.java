@@ -27,7 +27,18 @@ public class HelloController {
                 int s = -q - r;
                 if (s >= -GRID_RADIUS && s <= GRID_RADIUS) {
                     Point hexPosition = calculateHexPixel(q, r);
-                    Polygon hexagon = createHexCopy(hexPosition.x, hexPosition.y);
+                    Polygon hexagon = new Polygon();
+                    hexagon.getPoints().addAll(hexPrototype.getPoints()); // Copy the points from hexPrototype
+                    hexagon.setFill(Color.web("#F1A300"));
+                    hexagon.setStroke(Color.BLACK);
+                    hexagon.setLayoutX(hexPosition.x);
+                    hexagon.setLayoutY(hexPosition.y);
+
+                    // Set a unique ID for the hexagon
+                    hexagon.setId("hexagon-" + q + "-" + r); // You can use q and r to make the ID unique
+
+                    
+
                     hexBoardPane.getChildren().add(hexagon);
                 }
             }
@@ -37,17 +48,7 @@ public class HelloController {
     private Point calculateHexPixel(int q, int r) {
         double x = HEX_RADIUS * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
         double y = HEX_RADIUS * (1.5 * r);
-        return new Point(q, r, -q-r, x + 200, y + 200); // Offset to center board
-    }
-
-    private Polygon createHexCopy(double x, double y) {
-        Polygon newHex = new Polygon();
-        newHex.getPoints().addAll(hexPrototype.getPoints()); // Copy template points
-        newHex.setFill(Color.web("#1f78ff"));
-        newHex.setStroke(Color.BLACK);
-        newHex.setLayoutX(x);
-        newHex.setLayoutY(y);
-        return newHex;
+        return new Point(q, r, -q - r, x + 290, y + 290); // Offset to center board
     }
 
     // Point class (representing hexagonal grid coordinates and calculations)
