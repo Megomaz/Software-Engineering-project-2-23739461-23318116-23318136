@@ -10,7 +10,10 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-   <Polygon fill="#ff861f" layoutX="94.0" layoutY="80.0">
+    <Pane fx:id="hexBoardPane" prefHeight="500.0" prefWidth="500.0">
+
+
+   <Polygon fx:id = "hexPrototype" fill="#ff861f" layoutX="94.0" layoutY="80.0">
       <points>
          <Double fx:value="0.0" />
          <Double fx:value="-50.0" />
@@ -26,9 +29,7 @@
          <Double fx:value="-25.0" />
       </points>
    </Polygon>
-
-    <!-- Removed the first Polygon, now only the second one from AnchorPane -->
-    <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" />
+    </Pane>
 
 
 
