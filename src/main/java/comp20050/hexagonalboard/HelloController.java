@@ -37,7 +37,7 @@ public class HelloController {
                     // Set a unique ID for the hexagon
                     hexagon.setId("hexagon-" + q + "-" + r); // You can use q and r to make the ID unique
 
-                    
+
 
                     hexBoardPane.getChildren().add(hexagon);
                 }
@@ -48,7 +48,7 @@ public class HelloController {
     private Point calculateHexPixel(int q, int r) {
         double x = HEX_RADIUS * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
         double y = HEX_RADIUS * (1.5 * r);
-        return new Point(q, r, -q - r, x + 290, y + 290); // Offset to center board
+        return new Point(q, r, -q - r, x + 500, y + 100); // Offset to center board
     }
 
     // Point class (representing hexagonal grid coordinates and calculations)
