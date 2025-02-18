@@ -2,7 +2,7 @@ package comp20050.hexagonalboard;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;  // paint colours
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
 public class HelloController {
@@ -11,10 +11,10 @@ public class HelloController {
     private Pane hexBoardPane; // Pane where hexagons are drawn
 
     @FXML
-    private Polygon hexPrototype; // Reference to the FXML hexagon template// initilaised in hello-view.fxml makes code more efficient
+    private Polygon hexPrototype; // Reference to the FXML hexagon template
 
     private static final int GRID_RADIUS = 3; // Hex grid range
-    private static final double HEX_RADIUS = 30; // Distance from center to hex corners
+    private static final double HEX_RADIUS = 49; // Distance from center to hex corners
 
     @FXML
     public void initialize() {
@@ -35,11 +35,10 @@ public class HelloController {
     }
 
     private Point calculateHexPixel(int q, int r) {
-        double x = HEX_RADIUS * Math.sqrt(3) * (q + 0.5 * r); // Adjust the horizontal distance
-        double y = HEX_RADIUS * 1.5 * r; // Adjust the vertical distance
-        return new Point(x + 200, y + 200); // Offset to center the board
+        double x = HEX_RADIUS * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
+        double y = HEX_RADIUS * (1.5 * r);
+        return new Point(q, r, -q-r, x + 200, y + 200); // Offset to center board
     }
-
 
     private Polygon createHexCopy(double x, double y) {
         Polygon newHex = new Polygon();
@@ -51,11 +50,38 @@ public class HelloController {
         return newHex;
     }
 
+    // Point class (representing hexagonal grid coordinates and calculations)
     private static class Point {
         double x, y;
-        Point(double x, double y) {
+        int q, r, s;  // Cube coordinates (q, r, s) for hexagons
+
+        // Constructor for initializing q, r, s and x, y
+        Point(int q, int r, int s, double x, double y) {
+            this.q = q;
+            this.r = r;
+            this.s = s;
             this.x = x;
             this.y = y;
+        }
+
+        // Calculate the length (Manhattan distance from origin)
+        public int length() {
+            return (Math.abs(q) + Math.abs(r) + Math.abs(s)) / 2;
+        }
+
+        // Calculate the distance between this point and another hexagon (Point)
+        public int distance(Point b) {
+            return subtract(b).length();
+        }
+
+        // Subtract another point's coordinates from this point
+        private Point subtract(Point b) {
+            return new Point(
+                    this.q - b.q,  // Difference in q
+                    this.r - b.r,  // Difference in r
+                    this.s - b.s,  // Difference in s
+                    0, 0           // No need for x, y in subtraction
+            );
         }
     }
 }
