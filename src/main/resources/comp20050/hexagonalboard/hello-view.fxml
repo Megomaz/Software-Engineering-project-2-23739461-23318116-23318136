@@ -6,7 +6,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.control.Label?>
 
-<VBox alignment="CENTER" prefHeight="1000.0" prefWidth="1000.0" spacing="40.0"
+<VBox alignment="CENTER" prefHeight="900.0" prefWidth="900.0" spacing="80.0"
       xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="comp20050.hexagonalboard.HelloController">
 
