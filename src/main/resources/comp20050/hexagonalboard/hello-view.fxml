@@ -4,42 +4,41 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.control.Label?>
 
-<VBox alignment="CENTER" prefHeight="1000.0" prefWidth="1000.0" spacing="200.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp20050.hexagonalboard.HelloController">
+<VBox alignment="CENTER" prefHeight="1000.0" prefWidth="1000.0" spacing="40.0"
+      xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="comp20050.hexagonalboard.HelloController">
 
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
+    <!-- Turn Label -->
+    <Label fx:id="turnLabel" text="Red's Turn" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
-    <Polygon fx:id="hexPrototype" fill="#c46313" rotate="90.0" visible="false" >
+    <!-- Hexagon Prototype (Invisible) -->
+    <Polygon fx:id="hexPrototype" fill="#FF0000" stroke="black" strokeWidth="2" rotate="90.0" visible="false">
+        <points>
+            <Double fx:value="0.0" />
+            <Double fx:value="-50.0" />
+            <Double fx:value="45" />
+            <Double fx:value="-25.0" />
+            <Double fx:value="45" />
+            <Double fx:value="25.0" />
+            <Double fx:value="0.0" />
+            <Double fx:value="50.0" />
+            <Double fx:value="-45" />
+            <Double fx:value="25.0" />
+            <Double fx:value="-45" />
+            <Double fx:value="-25.0" />
+        </points>
+    </Polygon>
 
+    <!-- Stone Prototype (Invisible Circle) -->
+    <Circle fx:id="stonePrototype" radius="20" fill="red" visible="true"/>
 
-    <points>
-      <Double fx:value="0.0" />
-      <Double fx:value="-50.0" />
-      <Double fx:value="45" />
-      <Double fx:value="-25.0" />
-      <Double fx:value="45" />
-      <Double fx:value="25.0" />
-      <Double fx:value="0.0" />
-      <Double fx:value="50.0" />
-      <Double fx:value="-45" />
-      <Double fx:value="25.0" />
-      <Double fx:value="-45" />
-      <Double fx:value="-25.0" />
-   </points>
-</Polygon>
-    <Pane fx:id="hexBoardPane" prefHeight="500.0" prefWidth="500.0" />
-
-
-
-
-
-
-</VBox>
-
-
-
+    <!-- Pane to Hold Hex Board -->
+    <Pane fx:id="hexBoardPane" prefHeight="500.0" prefWidth="500.0"/>
 
 </VBox>
