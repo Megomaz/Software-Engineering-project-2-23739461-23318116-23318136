@@ -40,6 +40,7 @@ public class HelloController {
 
 
                     hexBoardPane.getChildren().add(hexagon);
+                        hexBoardPane.setRotate(90);  // make flat top
                 }
             }
         }
