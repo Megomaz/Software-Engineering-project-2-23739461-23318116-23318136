@@ -13,8 +13,8 @@ public class HelloController {
     @FXML
     private Polygon hexPrototype; // Reference to the FXML hexagon template
 
-    private static final int GRID_RADIUS = 3; // Hex grid range
-    private static final double HEX_RADIUS = 49; // Distance from center to hex corners
+    private static final int GRID_RADIUS = 6; // Hex grid range
+    private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
 
     @FXML
     public void initialize() {
@@ -28,28 +28,33 @@ public class HelloController {
                 if (s >= -GRID_RADIUS && s <= GRID_RADIUS) {
                     Point hexPosition = calculateHexPixel(q, r);
                     Polygon hexagon = new Polygon();
-                    hexagon.getPoints().addAll(hexPrototype.getPoints()); // Copy the points from hexPrototype
+
+                    // Iterate over the points from hexPrototype and divide each by 2
+                    for (Double point : hexPrototype.getPoints()) {
+                        hexagon.getPoints().add(point / 1);  // Divide each point by 2
+                    }
+
                     hexagon.setFill(Color.web("#F1A300"));
                     hexagon.setStroke(Color.BLACK);
                     hexagon.setLayoutX(hexPosition.x);
                     hexagon.setLayoutY(hexPosition.y);
 
                     // Set a unique ID for the hexagon
-                    hexagon.setId("hexagon-" + q + "-" + r); // You can use q and r to make the ID unique
-
-
+                    hexagon.setId("hexagon-" + q + "-" + r);
 
                     hexBoardPane.getChildren().add(hexagon);
-                        hexBoardPane.setRotate(90);  // make flat top
                 }
             }
         }
+        // Apply rotation to the entire board at the end
+        hexBoardPane.setRotate(90);
     }
+
 
     private Point calculateHexPixel(int q, int r) {
         double x = HEX_RADIUS * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
         double y = HEX_RADIUS * (1.5 * r);
-        return new Point(q, r, -q - r, x + 500, y + 100); // Offset to center board
+        return new Point(q, r, -q - r, x + 600, y + 200); // Offset to center board
     }
 
     // Point class (representing hexagonal grid coordinates and calculations)
