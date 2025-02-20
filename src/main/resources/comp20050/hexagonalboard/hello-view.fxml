@@ -21,19 +21,20 @@
     <Polygon fx:id="hexPrototype" fill="#FF0000" stroke="black" strokeWidth="2" rotate="90.0" visible="false">
         <points>
             <Double fx:value="0.0" />
-            <Double fx:value="-50.0" />
-            <Double fx:value="45" />
             <Double fx:value="-25.0" />
-            <Double fx:value="45" />
-            <Double fx:value="25.0" />
+            <Double fx:value="22.5" />
+            <Double fx:value="-12.5" />
+            <Double fx:value="22.5" />
+            <Double fx:value="12.5" />
             <Double fx:value="0.0" />
-            <Double fx:value="50.0" />
-            <Double fx:value="-45" />
             <Double fx:value="25.0" />
-            <Double fx:value="-45" />
-            <Double fx:value="-25.0" />
+            <Double fx:value="-22.5" />
+            <Double fx:value="12.5" />
+            <Double fx:value="-22.5" />
+            <Double fx:value="-12.5" />
         </points>
     </Polygon>
+
 
     <!-- Stone Prototype (Invisible Circle) -->
     <Circle fx:id="stonePrototype" radius="20" fill="red" visible="true"/>
