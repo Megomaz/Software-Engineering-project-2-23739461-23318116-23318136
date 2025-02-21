@@ -1,6 +1,7 @@
 package comp20050.hexagonalboard;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -13,12 +14,17 @@ public class HelloController {
     @FXML
     private Polygon hexPrototype; // Reference to the FXML hexagon template
 
+    @FXML
+    private Label turnLabel; // Label for turn display
+
     private static final int GRID_RADIUS = 6; // Hex grid range
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
+    private boolean isRedTurn = true; // Track current player's turn
 
     @FXML
     public void initialize() {
         generateHexBoard();
+        updateTurnIndicator(); // Set initial turn label
     }
 
     private void generateHexBoard() {
@@ -29,66 +35,72 @@ public class HelloController {
                     Point hexPosition = calculateHexPixel(q, r);
                     Polygon hexagon = new Polygon();
 
-                    // Iterate over the points from hexPrototype and divide each by 2
+                    // Copy points from prototype
                     for (Double point : hexPrototype.getPoints()) {
-                        hexagon.getPoints().add(point / 1);  // Divide each point by 2
+                        hexagon.getPoints().add(point);
                     }
 
-                    hexagon.setFill(Color.web("#F1A300"));
+                    hexagon.setFill(Color.web("#F1A300")); // Default color
                     hexagon.setStroke(Color.BLACK);
                     hexagon.setLayoutX(hexPosition.x);
                     hexagon.setLayoutY(hexPosition.y);
 
-                    // Set a unique ID for the hexagon
+                    // Set a unique ID for debugging
                     hexagon.setId("hexagon-" + q + "-" + r);
+
+                    // Add event listener to handle turns & disable re-clicking
+                    hexagon.setOnMouseClicked(event -> placeStone(hexagon));
 
                     hexBoardPane.getChildren().add(hexagon);
                 }
             }
         }
-        // Apply rotation to the entire board at the end
-        hexBoardPane.setRotate(90);
+        hexBoardPane.setRotate(90); // Rotate board
     }
 
+    private void placeStone(Polygon hexagon) {
+        if (!hexagon.getFill().equals(Color.web("#F1A300"))) {
+            return; // Ignore if already clicked
+        }
+
+        // Set color based on turn
+        hexagon.setFill(isRedTurn ? Color.RED : Color.BLUE);
+
+        // Disable further clicks
+        hexagon.setOnMouseClicked(null);
+
+        // Switch turn
+        isRedTurn = !isRedTurn;
+        updateTurnIndicator();
+    }
+
+    private void updateTurnIndicator() {
+        // Update the label text based on whose turn it is
+        if (isRedTurn) {
+            turnLabel.setText("Red's Turn");
+            turnLabel.setTextFill(Color.RED); // Set label color to red
+        } else {
+            turnLabel.setText("Blue's Turn");
+            turnLabel.setTextFill(Color.BLUE); // Set label color to blue
+        }
+    }
 
     private Point calculateHexPixel(int q, int r) {
         double x = HEX_RADIUS * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
         double y = HEX_RADIUS * (1.5 * r);
-        return new Point(q, r, -q - r, x + 600, y + 200); // Offset to center board
+        return new Point(q, r, -q - r, x + 600, y + 200);
     }
 
-    // Point class (representing hexagonal grid coordinates and calculations)
     private static class Point {
         double x, y;
-        int q, r, s;  // Cube coordinates (q, r, s) for hexagons
+        int q, r, s;
 
-        // Constructor for initializing q, r, s and x, y
         Point(int q, int r, int s, double x, double y) {
             this.q = q;
             this.r = r;
             this.s = s;
             this.x = x;
             this.y = y;
-        }
-
-        // Calculate the length (Manhattan distance from origin)
-        public int length() {
-            return (Math.abs(q) + Math.abs(r) + Math.abs(s)) / 2;
-        }
-
-        // Calculate the distance between this point and another hexagon (Point)
-        public int distance(Point b) {
-            return subtract(b).length();
-        }
-
-        // Subtract another point's coordinates from this point
-        private Point subtract(Point b) {
-            return new Point(
-                    this.q - b.q,  // Difference in q
-                    this.r - b.r,  // Difference in r
-                    this.s - b.s,  // Difference in s
-                    0, 0           // No need for x, y in subtraction
-            );
         }
     }
 }
