@@ -19,7 +19,7 @@ public class HelloController {
 
     private static final int GRID_RADIUS = 6; // Hex grid range
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
-    private boolean isRedTurn = true; // Track current player's turn
+    private int currentTurn = 0; // 0 for Red, 1 for Blue
 
     @FXML
     public void initialize() {
@@ -49,7 +49,11 @@ public class HelloController {
                     hexagon.setId("hexagon-" + q + "-" + r);
 
                     // Add event listener to handle turns & disable re-clicking
-                    hexagon.setOnMouseClicked(event -> placeStone(hexagon));
+                    hexagon.setOnMouseClicked(event -> {
+                        if (Player.attemptPlaceStone(hexagon)) {
+                            placeStone(hexagon);
+                        }
+                    });
 
                     hexBoardPane.getChildren().add(hexagon);
                 }
@@ -59,30 +63,19 @@ public class HelloController {
     }
 
     private void placeStone(Polygon hexagon) {
-        if (!hexagon.getFill().equals(Color.web("#F1A300"))) {
-            return; // Ignore if already clicked
-        }
-
-        // Set color based on turn
-        hexagon.setFill(isRedTurn ? Color.RED : Color.BLUE);
-
-        // Disable further clicks
-        hexagon.setOnMouseClicked(null);
+        // Set color based on current player
+        hexagon.setFill(Player.PLAYERS[currentTurn].getId() == 0 ? Color.RED : Color.BLUE);
+        hexagon.setOnMouseClicked(null); // Disable further clicks
 
         // Switch turn
-        isRedTurn = !isRedTurn;
+        currentTurn = (currentTurn + 1) % 2;
         updateTurnIndicator();
     }
 
     private void updateTurnIndicator() {
-        // Update the label text based on whose turn it is
-        if (isRedTurn) {
-            turnLabel.setText("Red's Turn");
-            turnLabel.setTextFill(Color.RED); // Set label color to red
-        } else {
-            turnLabel.setText("Blue's Turn");
-            turnLabel.setTextFill(Color.BLUE); // Set label color to blue
-        }
+        Player currentPlayer = Player.PLAYERS[currentTurn];
+        turnLabel.setText(currentPlayer.getName() + "'s Turn");
+        turnLabel.setTextFill(currentPlayer.getId() == 0 ? Color.RED : Color.BLUE);
     }
 
     private Point calculateHexPixel(int q, int r) {
