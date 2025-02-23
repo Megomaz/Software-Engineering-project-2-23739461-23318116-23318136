@@ -46,7 +46,7 @@ class HelloControllerTest extends ApplicationTest {
     void testGenerateHexBoard() {
         // Ensure hexagons are generated correctly
         assertFalse(controller.hexBoardPane.getChildren().isEmpty(), "Hex board should contain hexagons.");
-        assertTrue(controller.hexBoardPane.getChildren().size() > 0, "Hex board should have multiple hexagons.");
+        assertFalse(controller.hexBoardPane.getChildren().isEmpty(), "Hex board should have multiple hexagons.");
 
         Polygon hexagon = (Polygon) controller.hexBoardPane.getChildren().get(0);
         assertEquals(Color.web("#F1A300"), hexagon.getFill(), "Hexagon should have the default color.");
