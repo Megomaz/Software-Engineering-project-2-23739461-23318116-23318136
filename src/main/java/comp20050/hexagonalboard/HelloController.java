@@ -9,17 +9,21 @@ import javafx.scene.shape.Polygon;
 public class HelloController {
 
     @FXML
-    private Pane hexBoardPane; // Pane where hexagons are drawn
+    Pane hexBoardPane; // Pane where hexagons are drawn
 
     @FXML
-    private Polygon hexPrototype; // Reference to the FXML hexagon template
+    Polygon hexPrototype; // Reference to the FXML hexagon template
 
     @FXML
-    private Label turnLabel; // Label for turn display
+    Label turnLabel; // Label for turn display
 
     private static final int GRID_RADIUS = 6; // Hex grid range
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
-    private int currentTurn = 0; // 0 for Red, 1 for Blue
+    private static int currentTurn = 0; // 0 for Red, 1 for Blue
+
+    public static int getCurrentTurn() {
+        return currentTurn;
+    }
 
     @FXML
     public void initialize() {
@@ -27,7 +31,7 @@ public class HelloController {
         updateTurnIndicator(); // Set initial turn label
     }
 
-    private void generateHexBoard() {
+    void generateHexBoard() {
         for (int q = -GRID_RADIUS; q <= GRID_RADIUS; q++) {
             for (int r = -GRID_RADIUS; r <= GRID_RADIUS; r++) {
                 int s = -q - r;
@@ -72,7 +76,7 @@ public class HelloController {
         updateTurnIndicator();
     }
 
-    private void updateTurnIndicator() {
+    void updateTurnIndicator() {
         Player currentPlayer = Player.PLAYERS[currentTurn];
         turnLabel.setText(currentPlayer.getName() + "'s Turn");
         turnLabel.setTextFill(currentPlayer.getId() == 0 ? Color.RED : Color.BLUE);
