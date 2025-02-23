@@ -37,7 +37,7 @@
 
 
     <!-- Stone Prototype (Invisible Circle) -->
-    <Circle fx:id="stonePrototype" fill="red" radius="20" visible="true" />
+    <Circle fx:id="stonePrototype" fill="red" radius="20" visible="false" />
 
     <!-- Pane to Hold Hex Board -->
     <Pane fx:id="hexBoardPane" prefHeight="500.0" prefWidth="500.0" />
