@@ -5,25 +5,23 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Circle;
 
 public class HelloController {
 
     @FXML
-    Pane hexBoardPane; // Pane where hexagons are drawn
+    private Pane hexBoardPane; // Pane where hexagons are drawn
 
     @FXML
-    Polygon hexPrototype; // Reference to the FXML hexagon template
+    private Polygon hexPrototype; // Reference to the FXML hexagon template
 
     @FXML
-    Label turnLabel; // Label for turn display
+    private Label turnLabel; // Label for turn display
 
     private static final int GRID_RADIUS = 6; // Hex grid range
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
-    private static int currentTurn = 0; // 0 for Red, 1 for Blue
-
-    public static int getCurrentTurn() {
-        return currentTurn;
-    }
+    private boolean isRedTurn = true; // Track current player's turn
+    private int currentTurn = 0; // 0 for Red, 1 for Blue
 
     @FXML
     public void initialize() {
@@ -31,7 +29,8 @@ public class HelloController {
         updateTurnIndicator(); // Set initial turn label
     }
 
-    void generateHexBoard() {
+    private void generateHexBoard() {
+        int id = 1;  // Start assigning IDs from 1
         for (int q = -GRID_RADIUS; q <= GRID_RADIUS; q++) {
             for (int r = -GRID_RADIUS; r <= GRID_RADIUS; r++) {
                 int s = -q - r;
@@ -44,39 +43,64 @@ public class HelloController {
                         hexagon.getPoints().add(point);
                     }
 
-                    hexagon.setFill(Color.web("#F1A300")); // Default color
+                    hexagon.setFill(Color.web("#F1A300")); // Default color (hexagon background)
                     hexagon.setStroke(Color.BLACK);
                     hexagon.setLayoutX(hexPosition.x);
                     hexagon.setLayoutY(hexPosition.y);
 
-                    // Set a unique ID for debugging
-                    hexagon.setId("hexagon-" + q + "-" + r);
+                    // Set a unique ID for the hexagon based on position
+                    hexagon.setId("hex-" + id);
 
                     // Add event listener to handle turns & disable re-clicking
-                    hexagon.setOnMouseClicked(event -> {
-                        if (Player.attemptPlaceStone(hexagon)) {
-                            placeStone(hexagon);
-                        }
-                    });
+                    int finalId = id;
+                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, finalId));
 
                     hexBoardPane.getChildren().add(hexagon);
+
+                    id++; // Increment the ID for the next hexagon
                 }
             }
         }
-        hexBoardPane.setRotate(90); // Rotate board
+        hexBoardPane.setRotate(90); // Rotate the board for better alignment
     }
 
-    private void placeStone(Polygon hexagon) {
-        // Set color based on current player
-        hexagon.setFill(Player.PLAYERS[currentTurn].getId() == 0 ? Color.RED : Color.BLUE);
-        hexagon.setOnMouseClicked(null); // Disable further clicks
+    private void placeStone(Polygon hexagon, int hexId) {
+        // Avoid placing a stone on an already occupied hexagon
+        if (!hexagon.getFill().equals(Color.web("#F1A300"))) {
+            return; // Ignore if already clicked or has a stone
+        }
 
-        // Switch turn
+        // Set color based on the current player's turn
+        Color stoneColor = isRedTurn ? Color.RED : Color.BLUE;
+
+        // Create the stone (circle) with a radius that fits within the hexagon
+        Circle stone = new Circle(HEX_RADIUS / 2); // Stone radius should be half of hexagon's radius
+        stone.setFill(stoneColor);
+        stone.setLayoutX(hexagon.getLayoutX());  // Align stone with hexagon's center
+        stone.setLayoutY(hexagon.getLayoutY());
+
+        // Add the stone to the hex board
+        hexBoardPane.getChildren().add(stone);
+
+        // Disable further clicks on this hexagon
+        hexagon.setOnMouseClicked(null);
+
+        // Switch the player's turn
+        isRedTurn = !isRedTurn;
         currentTurn = (currentTurn + 1) % 2;
         updateTurnIndicator();
     }
 
-    void updateTurnIndicator() {
+    private void updateTurnIndicator() {
+        // Update the label text based on whose turn it is
+        if (isRedTurn) {
+            turnLabel.setText("Red's Turn");
+            turnLabel.setTextFill(Color.RED); // Set label color to red
+        } else {
+            turnLabel.setText("Blue's Turn");
+            turnLabel.setTextFill(Color.BLUE); // Set label color to blue
+        }
+
         Player currentPlayer = Player.PLAYERS[currentTurn];
         turnLabel.setText(currentPlayer.getName() + "'s Turn");
         turnLabel.setTextFill(currentPlayer.getId() == 0 ? Color.RED : Color.BLUE);
