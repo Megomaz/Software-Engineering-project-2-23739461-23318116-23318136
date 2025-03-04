@@ -84,5 +84,25 @@ class HelloControllerTest extends ApplicationTest {
         assertEquals(0, HelloController.getCurrentTurn(), "Current turn should switch back to player 0 (Red).");
     }
 
+    @Test
+    public void testHexagonCoordinatesAreStored() {
+        // Simulate the user clicking on a specific hexagon, e.g., hexagon at (1, 1)
+        int row = 1;
+        int col = 1;
+        Polygon hexagon = (Polygon) controller.hexBoardPane.getChildren().get(0);
+
+        // Use interact() to simulate clicking the hexagon
+        interact(() -> hexagon.getOnMouseClicked().handle(null));
+
+        // Verify that the coordinates are stored correctly in the cell
+        Cell cell = controller.board.getCell(row, col);
+
+        // Assert that the stored coordinates match the expected ones
+        assertEquals(cell.getCoordinate(), "(x, y)");  // Replace x, y with actual expected coordinates
+
+        // Check that the cell is marked as occupied after the click
+        assertTrue(cell.isOccupied());
+    }
+    
 
 }

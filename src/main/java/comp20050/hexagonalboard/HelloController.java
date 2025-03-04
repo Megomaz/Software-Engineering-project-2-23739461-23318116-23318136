@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 
 public class HelloController {
 
@@ -20,13 +20,14 @@ public class HelloController {
 
     private static final int GRID_RADIUS = 6; // Hex grid range
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
-    private boolean isRedTurn = true; // Track current player's turn
     private int currentTurn = 0; // 0 for Red, 1 for Blue
+    private Board board;
 
     @FXML
     public void initialize() {
+        board = new Board(GRID_RADIUS * 2 + 1); // Initialize the board
         generateHexBoard();
-        updateTurnIndicator(); // Set initial turn label
+        UIHandler.updateTurnIndicator(Player.PLAYERS[currentTurn], turnLabel); // Set initial turn label
     }
 
     private void generateHexBoard() {
@@ -51,9 +52,14 @@ public class HelloController {
                     // Set a unique ID for the hexagon based on position
                     hexagon.setId("hex-" + id);
 
+                    // Create a Cell object and store it in the hexBoard array
+                    int row = q + GRID_RADIUS;
+                    int col = r + GRID_RADIUS;
+                    board.setCell(row, col, new Cell(hexPosition.x, hexPosition.y));
+
                     // Add event listener to handle turns & disable re-clicking
                     int finalId = id;
-                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, finalId));
+                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, finalId,row,col));
 
                     hexBoardPane.getChildren().add(hexagon);
 
@@ -64,14 +70,20 @@ public class HelloController {
         hexBoardPane.setRotate(90); // Rotate the board for better alignment
     }
 
-    private void placeStone(Polygon hexagon, int hexId) {
+    private void placeStone(Polygon hexagon, int hexId, int row, int col) {
         // Avoid placing a stone on an already occupied hexagon
-        if (!hexagon.getFill().equals(Color.web("#F1A300"))) {
+        if (!Player.attemptPlaceStone(hexagon)) {
             return; // Ignore if already clicked or has a stone
         }
 
+        // Get the cell from the board
+        Cell cell = board.getCell(row, col); // Get cell from board
+
+        // Get the current player
+        Player currentPlayer = Player.PLAYERS[currentTurn];
+
         // Set color based on the current player's turn
-        Color stoneColor = isRedTurn ? Color.RED : Color.BLUE;
+        Color stoneColor = currentPlayer.getId() == 0 ? Color.RED : Color.BLUE;
 
         // Create the stone (circle) with a radius that fits within the hexagon
         Circle stone = new Circle(HEX_RADIUS / 2); // Stone radius should be half of hexagon's radius
@@ -82,28 +94,15 @@ public class HelloController {
         // Add the stone to the hex board
         hexBoardPane.getChildren().add(stone);
 
+        // Mark the cell as occupied
+        cell.occupy();
+
         // Disable further clicks on this hexagon
         hexagon.setOnMouseClicked(null);
 
         // Switch the player's turn
-        isRedTurn = !isRedTurn;
         currentTurn = (currentTurn + 1) % 2;
-        updateTurnIndicator();
-    }
-
-    private void updateTurnIndicator() {
-        // Update the label text based on whose turn it is
-        if (isRedTurn) {
-            turnLabel.setText("Red's Turn");
-            turnLabel.setTextFill(Color.RED); // Set label color to red
-        } else {
-            turnLabel.setText("Blue's Turn");
-            turnLabel.setTextFill(Color.BLUE); // Set label color to blue
-        }
-
-        Player currentPlayer = Player.PLAYERS[currentTurn];
-        turnLabel.setText(currentPlayer.getName() + "'s Turn");
-        turnLabel.setTextFill(currentPlayer.getId() == 0 ? Color.RED : Color.BLUE);
+        UIHandler.updateTurnIndicator(Player.PLAYERS[currentTurn], turnLabel);
     }
 
     private Point calculateHexPixel(int q, int r) {
@@ -112,16 +111,9 @@ public class HelloController {
         return new Point(q, r, -q - r, x + 600, y + 200);
     }
 
-    private static class Point {
-        double x, y;
-        int q, r, s;
-
-        Point(int q, int r, int s, double x, double y) {
-            this.q = q;
-            this.r = r;
-            this.s = s;
-            this.x = x;
-            this.y = y;
-        }
+    /* TODO: Implement the logic to check for a winner.
+    public boolean checkwin() {
+        // This will be implemented later
     }
+    */
 }
