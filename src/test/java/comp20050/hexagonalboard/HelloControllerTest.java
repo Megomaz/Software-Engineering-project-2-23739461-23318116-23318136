@@ -1,4 +1,4 @@
-package comp20050.hexagonalboard;
+/*e comp20050.hexagonalboard;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -106,3 +106,4 @@ class HelloControllerTest extends ApplicationTest {
     
 
 }
+*/

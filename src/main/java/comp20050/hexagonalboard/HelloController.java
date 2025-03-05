@@ -59,7 +59,7 @@ public class HelloController {
 
                     // Add event listener to handle turns & disable re-clicking
                     int finalId = id;
-                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, finalId,row,col));
+                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, finalId, row, col));
 
                     hexBoardPane.getChildren().add(hexagon);
 
@@ -103,12 +103,34 @@ public class HelloController {
         // Switch the player's turn
         currentTurn = (currentTurn + 1) % 2;
         UIHandler.updateTurnIndicator(Player.PLAYERS[currentTurn], turnLabel);
+
+        // Highlight valid cells after the turn is made
+        highlightValidCells(Player.PLAYERS[currentTurn]);
     }
 
     private Point calculateHexPixel(int q, int r) {
         double x = HEX_RADIUS * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
         double y = HEX_RADIUS * (1.5 * r);
         return new Point(q, r, -q - r, x + 600, y + 200);
+    }
+
+    // Method to highlight valid cells based on the current player
+    private void highlightValidCells(Player currentPlayer) {
+        for (int q = -GRID_RADIUS; q <= GRID_RADIUS; q++) {
+            for (int r = -GRID_RADIUS; r <= GRID_RADIUS; r++) {
+                int s = -q - r; // Hexagonal coordinate calculation
+                if (s >= -GRID_RADIUS && s <= GRID_RADIUS) {
+                    // Check if the current cell is valid for placement
+                    if (board.validatePlacement(q + GRID_RADIUS, r + GRID_RADIUS, currentPlayer)) {
+                        // Highlight the cell (e.g., change its border color or fill)
+                        Polygon hexagon = (Polygon) hexBoardPane.lookup("#hex-" + (q + GRID_RADIUS) + "-" + (r + GRID_RADIUS));
+                        if (hexagon != null) {
+                            hexagon.setStroke(Color.GREEN); // Highlight valid cells with green border
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /* TODO: Implement the logic to check for a winner.
