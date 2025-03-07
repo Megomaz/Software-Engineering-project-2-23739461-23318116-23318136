@@ -55,7 +55,7 @@ public class HelloController {
                     // Create a Cell object and store it in the hexBoard array
                     int row = q + GRID_RADIUS;
                     int col = r + GRID_RADIUS;
-                    board.setCell(row, col, new Cell(hexPosition.x, hexPosition.y));
+                    board.setCell(row, col, new Cell(row,col));
 
                     // Add event listener to handle turns & disable re-clicking
                     int finalId = id;
@@ -94,6 +94,11 @@ public class HelloController {
         // Add the stone to the hex board
         hexBoardPane.getChildren().add(stone);
 
+        System.out.println(cell.getCoordinate());
+
+        // Print the adjacent cells
+        System.out.println(board.getAdjacentCellsAsString(row, col));
+
         // Mark the cell as occupied
         cell.occupy();
 
@@ -105,7 +110,7 @@ public class HelloController {
         UIHandler.updateTurnIndicator(Player.PLAYERS[currentTurn], turnLabel);
 
         // Highlight valid cells after the turn is made
-        highlightValidCells(Player.PLAYERS[currentTurn]);
+        // highlightValidCells(Player.PLAYERS[currentTurn]);
     }
 
     private Point calculateHexPixel(int q, int r) {
@@ -114,6 +119,7 @@ public class HelloController {
         return new Point(q, r, -q - r, x + 600, y + 200);
     }
 
+    /*
     // Method to highlight valid cells based on the current player
     private void highlightValidCells(Player currentPlayer) {
         for (int q = -GRID_RADIUS; q <= GRID_RADIUS; q++) {
@@ -132,6 +138,8 @@ public class HelloController {
             }
         }
     }
+    */
+
 
     /* TODO: Implement the logic to check for a winner.
     public boolean checkwin() {

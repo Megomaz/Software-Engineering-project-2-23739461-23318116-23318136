@@ -1,6 +1,7 @@
 package comp20050.hexagonalboard;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import java.util.*;
 
 
 public class Board {
@@ -33,7 +34,7 @@ public class Board {
     }
     */
 
-
+    /*
     public boolean validatePlacement(int row, int col, Player currentPlayer) {
         // Check if the selected cell is already occupied
         if (cells[row][col].isOccupied()) {
@@ -55,28 +56,58 @@ public class Board {
         // Return false if no adjacent opponent's stone found
         return false;
     }
+    */
 
 
+    public String getAdjacentCellsAsString(int row, int col) {
+        // Hexagonal grid direction offsets
+        int[][] directions = {
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, -1}, {-1, 1}
+        };
 
+        List<Cell> adjacentCells = new ArrayList<>();
+        StringBuilder sb = new StringBuilder("Adjacent cells: ");
 
+        // Loop through the directions and calculate adjacent cells
+        for (int[] dir : directions) {
+            int newRow = row + dir[0];
+            int newCol = col + dir[1];
 
-    public Point[] getAdjacentCells(int row, int col) {
-        // Adjacent cells in hexagonal coordinates
-        Point[] adjacentCells = new Point[6];
+            // Only proceed if the coordinates are within the valid range
+            if (!isInValidRange(newRow, newCol)) {
+                continue; // Ignore coordinates that are not part of the valid range
+            }
 
-        // Assuming the standard hexagonal directions for adjacent cells (q, r, s coordinates)
-        // Adjust these based on your hexagonal grid setup
-        adjacentCells[0] = new Point(row - 1, col, 0, 0, 0);  // Example, adjust for correct directions
-        adjacentCells[1] = new Point(row + 1, col, 0, 0, 0);
-        adjacentCells[2] = new Point(row, col - 1, 0, 0, 0);
-        adjacentCells[3] = new Point(row, col + 1, 0, 0, 0);
-        adjacentCells[4] = new Point(row - 1, col + 1, 0, 0, 0);
-        adjacentCells[5] = new Point(row + 1, col - 1, 0, 0, 0);
+            // Check if within the bounds of the board
+            if (newRow >= 0 && newRow < cells.length && newCol >= 0 && newCol < cells[0].length) {
+                // If it's a valid adjacent cell, add it to the list and append the coordinates
+                adjacentCells.add(cells[newRow][newCol]);
+                sb.append(cells[newRow][newCol].getCoordinate()).append(" ");
+            }
+        }
 
-        // Return the array of adjacent cells
-        return adjacentCells;
+        // If no adjacent cells were found, output a message
+        if (adjacentCells.isEmpty()) {
+            sb.append("No valid adjacent cells.");
+        }
+
+        return sb.toString();
     }
-    // To add Boundary checks etc
 
-
+    // Method to check if the coordinate falls in range
+    private boolean isInValidRange(int row, int col) {
+        return (row >= 0 && row <= 6 && col == 12) ||   // (0-6,12)
+                (row >= 0 && row <= 7 && col == 11) ||   // (0-7,11)
+                (row >= 0 && row <= 8 && col == 10) ||   // (0-8,10)
+                (row >= 0 && row <= 9 && col == 9)  ||   // (0-9,9)
+                (row >= 0 && row <= 10 && col == 8) ||   // (0-10,8)
+                (row >= 0 && row <= 11 && col == 7) ||   // (0-11,7)
+                (row >= 0 && row <= 12 && col == 6) ||   // (0-12,6)
+                (row >= 1 && row <= 12 && col == 5) ||   // (1-12,5)
+                (row >= 2 && row <= 12 && col == 4) ||   // (2-12,4)
+                (row >= 3 && row <= 12 && col == 3) ||   // (3-12,3)
+                (row >= 4 && row <= 12 && col == 2) ||   // (4-12,2)
+                (row >= 5 && row <= 12 && col == 1) ||   // (5-12,1)
+                (row >= 6 && row <= 12 && col == 0);     // (6-12,0)
+    }
 }

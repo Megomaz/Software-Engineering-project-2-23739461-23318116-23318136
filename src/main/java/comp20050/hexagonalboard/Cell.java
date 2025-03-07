@@ -4,6 +4,7 @@ public class Cell {
     private double x, y;  // Coordinates of the cell in the 2D grid
     private boolean occupied;  // Tracks if the cell is occupied
     private Player occupyingPlayer;
+
     // Constructor that initializes the coordinates and occupancy status
     public Cell(double x, double y) {
         this.x = x;
@@ -47,7 +48,7 @@ public class Cell {
 
     // Method to get the coordinates as a string in the format "x, y"
     public String getCoordinate() {
-        return "(" + x + ", " + y + ")";
+        return "(" + getX() + ", " + getY() + ")";
     }
 
 
