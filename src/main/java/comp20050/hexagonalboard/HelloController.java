@@ -6,6 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import java.util.*;
 
 public class HelloController {
 
@@ -85,6 +86,22 @@ public class HelloController {
         // Set color based on the current player's turn
         Color stoneColor = currentPlayer.getId() == 0 ? Color.RED : Color.BLUE;
 
+        // Get the adjacent cells
+        List<Cell> adjacentCells = board.getAdjacentCells(row, col);
+
+        // Check if any adjacent cell contains a stone of the same color
+        for (Cell adjacentCell : adjacentCells) {
+            // Check if adjacent cell is occupied and if the stone color matches the current player's color
+            if (adjacentCell.isOccupied()) {
+                // If adjacent stone color is the same as the current player's, deny placement
+                if ((stoneColor == Color.RED && adjacentCell.getStoneColor() == Color.RED) ||
+                        (stoneColor == Color.BLUE && adjacentCell.getStoneColor() == Color.BLUE)) {
+                    System.out.println("Cannot place stone next to your own color.");
+                    return;
+                }
+            }
+        }
+
         // Create the stone (circle) with a radius that fits within the hexagon
         Circle stone = new Circle(HEX_RADIUS / 2); // Stone radius should be half of hexagon's radius
         stone.setFill(stoneColor);
@@ -100,7 +117,7 @@ public class HelloController {
         System.out.println(board.getAdjacentCellsAsString(row, col));
 
         // Mark the cell as occupied
-        cell.occupy();
+        cell.occupy(currentPlayer);
 
         // Disable further clicks on this hexagon
         hexagon.setOnMouseClicked(null);

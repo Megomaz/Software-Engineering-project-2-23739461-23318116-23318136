@@ -58,6 +58,26 @@ public class Board {
     }
     */
 
+    public List<Cell> getAdjacentCells(int row, int col) {
+        List<Cell> adjacentCells = new ArrayList<>();
+
+        // Define possible adjacent cell positions in a hexagonal grid
+        int[][] directions = {
+                {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, -1}
+        };
+
+        for (int[] dir : directions) {
+            int newRow = row + dir[0];
+            int newCol = col + dir[1];
+
+            // Check if new position is within bounds
+            if (isInValidRange(newRow, newCol)) {
+                adjacentCells.add(getCell(newRow, newCol));
+            }
+        }
+
+        return adjacentCells;
+    }
 
     public String getAdjacentCellsAsString(int row, int col) {
         // Hexagonal grid direction offsets
