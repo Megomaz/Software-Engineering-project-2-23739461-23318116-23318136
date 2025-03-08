@@ -77,7 +77,7 @@ public class HelloController {
         }
 
         // Get the cell from the board
-        Cell cell = board.getCell(row, col); // Get cell from board
+        Cell cell = board.getCell(row, col);
 
         // Get the current player
         Player currentPlayer = Player.PLAYERS[currentTurn];
@@ -85,85 +85,20 @@ public class HelloController {
         // Set color based on the current player's turn
         Color stoneColor = currentPlayer.getId() == 0 ? Color.RED : Color.BLUE;
 
-        // Get the adjacent cells
+        // Get adjacent cells
         List<Cell> adjacentCells = board.getAdjacentCells(row, col);
 
-        // List to store cells that are part of the current search path
-        List<Cell> cellsToCheck = new ArrayList<>(adjacentCells);
+        // Check if the move captures any stones
+        boolean captured = attemptCapture(row, col, stoneColor, currentPlayer, hexagon);
 
-        // Variables to count the number of red and blue stones
-        int redCount = 0;
-        int blueCount = 0;
-
-        // Set to track visited cells
-        Set<Cell> visitedCells = new HashSet<>();
-
-        // Loop through adjacent cells
-        while (!cellsToCheck.isEmpty()) {
-            Cell currentCheckingCell = cellsToCheck.remove(0);  // Get the next cell to check
-
-            // If the current checking cell is occupied and not visited
-            if (!visitedCells.contains(currentCheckingCell) && currentCheckingCell.isOccupied()) {
-                visitedCells.add(currentCheckingCell);  // Mark the cell as visited
-
-                // Count the red or blue stones
-                Color adjacentColor = currentCheckingCell.getStoneColor();
-                if (adjacentColor == Color.RED) {
-                    redCount++;
-                } else if (adjacentColor == Color.BLUE) {
-                    blueCount++;
-                }
-
-                // Add adjacent cells of the current checking cell to the list to continue searching
-                List<Cell> nextAdjacentCells = board.getAdjacentCells((int) currentCheckingCell.getX(), (int) currentCheckingCell.getY());
-                for (Cell nextCell : nextAdjacentCells) {
-                    // Only add the cell if it's not already visited
-                    if (!visitedCells.contains(nextCell)) {
-                        cellsToCheck.add(nextCell);  // Add to list of cells to check
-                    }
+        // If no capture occurs, ensure the move is not adjacent to the same color
+        if (!captured) {
+            for (Cell adjacent : adjacentCells) {
+                if (adjacent.isOccupied() && adjacent.getStoneColor() == stoneColor) {
+                    System.out.println("Invalid move: You cannot place next to your own color without capturing.");
+                    return; // Prevent placement if next to the same color without capturing
                 }
             }
-        }
-
-        // After the loop, print the counts of red and blue stones in the adjacent cells
-        System.out.println("Red stones in adjacent cells: " + redCount);
-        System.out.println("Blue stones in adjacent cells: " + blueCount);
-
-        // Check if the current player's color count + 1 is greater than or equal to the opponent's count,
-        // and there is at least 1 stone of the opponent's color in the adjacent cells.
-        if ((stoneColor == Color.RED && redCount + 1 >= blueCount && blueCount >= 1 && redCount >= 1) ||
-                (stoneColor == Color.BLUE && blueCount + 1 >= redCount && redCount >= 1 && blueCount >= 1)) {
-
-            // Loop through the visited cells and flip opponent's stones
-            for (Cell currentCheckingCell : visitedCells) {
-                // If the current cell has the opponent's color, flip it
-                if (currentCheckingCell.isOccupied()) {
-                    if (stoneColor == Color.RED && currentCheckingCell.getStoneColor() == Color.BLUE) {
-                        currentCheckingCell.getStone().setFill(Color.RED);
-                        currentCheckingCell.occupy(currentPlayer, hexagon);
-                        System.out.println("You have captured " + blueCount + " blue stones");
-                        System.out.println("Flipping blue stone at (" + currentCheckingCell.getX() + ", " + currentCheckingCell.getY() + ") to red.");
-                    } else if (stoneColor == Color.BLUE && currentCheckingCell.getStoneColor() == Color.RED) {
-                        currentCheckingCell.getStone().setFill(Color.BLUE);
-                        System.out.println("You have captured " + redCount + " red stones");
-                        System.out.println("Flipping red stone at (" + currentCheckingCell.getX() + ", " + currentCheckingCell.getY() + ") to blue.");
-                    }
-                }
-            }
-
-            // Update counts after flipping stones
-            if (stoneColor == Color.RED) {
-                redCount = redCount + blueCount + 1;  // Red count increases by the number of flipped blue stones
-                blueCount = 0;  // No blue stones left in adjacent cells
-            } else{
-                blueCount = blueCount + redCount + 1;  // Blue count increases by the number of flipped red stones
-                redCount = 0;  // No red stones left in adjacent cells
-            }
-
-            System.out.println("Red stones after flipping: " + redCount);
-            System.out.println("Blue stones after flipping: " + blueCount);
-        } else {
-            System.out.println("Condition not met for flipping stones.");
         }
 
         System.out.println(cell.getCoordinate());
@@ -186,6 +121,58 @@ public class HelloController {
 
         // Highlight valid cells after the turn is made
         // highlightValidCells(Player.PLAYERS[currentTurn]);
+    }
+
+    private boolean attemptCapture(int row, int col, Color stoneColor, Player currentPlayer, Polygon hexagon) {
+        List<Cell> adjacentCells = board.getAdjacentCells(row, col);
+        List<Cell> cellsToCheck = new ArrayList<>(adjacentCells);
+        Set<Cell> visitedCells = new HashSet<>();
+
+        int redCount = 0;
+        int blueCount = 0;
+
+        while (!cellsToCheck.isEmpty()) {
+            Cell currentCheckingCell = cellsToCheck.remove(0);
+
+            if (!visitedCells.contains(currentCheckingCell) && currentCheckingCell.isOccupied()) {
+                visitedCells.add(currentCheckingCell);
+
+                Color adjacentColor = currentCheckingCell.getStoneColor();
+                if (adjacentColor == Color.RED) {
+                    redCount++;
+                } else if (adjacentColor == Color.BLUE) {
+                    blueCount++;
+                }
+
+                List<Cell> nextAdjacentCells = board.getAdjacentCells((int) currentCheckingCell.getX(), (int) currentCheckingCell.getY());
+                for (Cell nextCell : nextAdjacentCells) {
+                    if (!visitedCells.contains(nextCell)) {
+                        cellsToCheck.add(nextCell);
+                    }
+                }
+            }
+        }
+
+        if ((stoneColor == Color.RED && redCount + 1 >= blueCount && blueCount >= 1 && redCount >= 1) ||
+                (stoneColor == Color.BLUE && blueCount + 1 >= redCount && redCount >= 1 && blueCount >= 1)) {
+
+            for (Cell currentCheckingCell : visitedCells) {
+                if (currentCheckingCell.isOccupied()) {
+                    if (stoneColor == Color.RED && currentCheckingCell.getStoneColor() == Color.BLUE) {
+                        currentCheckingCell.getStone().setFill(Color.RED);
+                        currentCheckingCell.occupy(currentPlayer, hexagon);
+                    } else if (stoneColor == Color.BLUE && currentCheckingCell.getStoneColor() == Color.RED) {
+                        currentCheckingCell.getStone().setFill(Color.BLUE);
+                        currentCheckingCell.occupy(currentPlayer, hexagon);
+                    }
+                }
+            }
+
+            System.out.println("Captured stones. Red: " + redCount + ", Blue: " + blueCount);
+            return true;
+        }
+
+        return false; // No valid capture
     }
 
     private Point calculateHexPixel(int q, int r) {

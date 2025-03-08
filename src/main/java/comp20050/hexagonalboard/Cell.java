@@ -68,12 +68,16 @@ public class Cell {
         this.occupied = true;
         this.occupyingPlayer = player;
         this.stoneColor = (player.getId() == 0) ? Color.RED : Color.BLUE;  // Set stone color based on player
-        // Create the stone (circle) and set its properties
-        this.stone = new Circle(24.5 / 2);  // Assuming HEX_RADIUS is 24.5, set radius as half
-        this.stone.setFill(this.stoneColor);
-        this.stone.setLayoutX(hexagon.getLayoutX());  // Position the stone at the cell's x-coordinate
-        this.stone.setLayoutY(hexagon.getLayoutY());  // Position the stone at the cell's y-coordinate
 
+        if (this.stone == null) {
+            // Create the stone only if it doesn't exist
+            this.stone = new Circle(24.5 / 2);  // Assuming HEX_RADIUS is 24.5
+            this.stone.setLayoutX(hexagon.getLayoutX());  // Position the stone at the cell's x-coordinate
+            this.stone.setLayoutY(hexagon.getLayoutY());  // Position the stone at the cell's y-coordinate
+        }
+
+        // Always update the color of the existing stone
+        this.stone.setFill(this.stoneColor);
     }
 
     public Player getOccupyingPlayer() {
