@@ -37,6 +37,10 @@ public class Cell {
         return stoneColor;
     }
 
+    public void setStoneColor(Color color) {
+        this.stoneColor = color;
+    }
+
     // Method to clear the occupancy status
     public void clear() {
         this.occupied = false;

@@ -89,17 +89,81 @@ public class HelloController {
         // Get the adjacent cells
         List<Cell> adjacentCells = board.getAdjacentCells(row, col);
 
-        // Check if any adjacent cell contains a stone of the same color
-        for (Cell adjacentCell : adjacentCells) {
-            // Check if adjacent cell is occupied and if the stone color matches the current player's color
-            if (adjacentCell.isOccupied()) {
-                // If adjacent stone color is the same as the current player's, deny placement
-                if ((stoneColor == Color.RED && adjacentCell.getStoneColor() == Color.RED) ||
-                        (stoneColor == Color.BLUE && adjacentCell.getStoneColor() == Color.BLUE)) {
-                    System.out.println("Cannot place stone next to your own color.");
-                    return;
+        // List to store cells that are part of the current search path
+        List<Cell> cellsToCheck = new ArrayList<>(adjacentCells);
+
+        // Variables to count the number of red and blue stones
+        int redCount = 0;
+        int blueCount = 0;
+
+        // Set to track visited cells
+        Set<Cell> visitedCells = new HashSet<>();
+
+        // Loop through adjacent cells
+        while (!cellsToCheck.isEmpty()) {
+            Cell currentCheckingCell = cellsToCheck.remove(0);  // Get the next cell to check
+
+            // If the current checking cell is occupied and not visited
+            if (!visitedCells.contains(currentCheckingCell) && currentCheckingCell.isOccupied()) {
+                visitedCells.add(currentCheckingCell);  // Mark the cell as visited
+
+                // Count the red or blue stones
+                Color adjacentColor = currentCheckingCell.getStoneColor();
+                if (adjacentColor == Color.RED) {
+                    redCount++;
+                } else if (adjacentColor == Color.BLUE) {
+                    blueCount++;
+                }
+
+                // Add adjacent cells of the current checking cell to the list to continue searching
+                List<Cell> nextAdjacentCells = board.getAdjacentCells((int) currentCheckingCell.getX(), (int) currentCheckingCell.getY());
+                for (Cell nextCell : nextAdjacentCells) {
+                    // Only add the cell if it's not already visited
+                    if (!visitedCells.contains(nextCell)) {
+                        cellsToCheck.add(nextCell);  // Add to list of cells to check
+                    }
                 }
             }
+        }
+
+        // After the loop, print the counts of red and blue stones in the adjacent cells
+        System.out.println("Red stones in adjacent cells: " + redCount);
+        System.out.println("Blue stones in adjacent cells: " + blueCount);
+
+        // Check if the current player's color count + 1 is greater than or equal to the opponent's count,
+        // and there is at least 1 stone of the opponent's color in the adjacent cells.
+        if ((stoneColor == Color.RED && redCount + 1 >= blueCount && blueCount >= 1 && redCount >= 1) ||
+                (stoneColor == Color.BLUE && blueCount + 1 >= redCount && redCount >= 1 && blueCount >= 1)) {
+
+            // Loop through the visited cells and flip opponent's stones
+            for (Cell currentCheckingCell : visitedCells) {
+                // If the current cell has the opponent's color, flip it
+                if (currentCheckingCell.isOccupied()) {
+                    if (stoneColor == Color.RED && currentCheckingCell.getStoneColor() == Color.BLUE) {
+                        currentCheckingCell.occupy(currentPlayer);
+                        System.out.println("You have captured " + blueCount + " blue stones");
+                        System.out.println("Flipping blue stone at (" + currentCheckingCell.getX() + ", " + currentCheckingCell.getY() + ") to red.");
+                    } else if (stoneColor == Color.BLUE && currentCheckingCell.getStoneColor() == Color.RED) {
+                        currentCheckingCell.occupy(currentPlayer);
+                        System.out.println("You have captured " + redCount + " red stones");
+                        System.out.println("Flipping red stone at (" + currentCheckingCell.getX() + ", " + currentCheckingCell.getY() + ") to blue.");
+                    }
+                }
+            }
+
+            // Update counts after flipping stones
+            if (stoneColor == Color.RED) {
+                redCount = redCount + blueCount;  // Red count increases by the number of flipped blue stones
+                blueCount = 0;  // No blue stones left in adjacent cells
+            } else if (stoneColor == Color.BLUE) {
+                blueCount = blueCount + redCount;  // Blue count increases by the number of flipped red stones
+                redCount = 0;  // No red stones left in adjacent cells
+            }
+
+            System.out.println("Red stones after flipping: " + redCount);
+            System.out.println("Blue stones after flipping: " + blueCount);
+        } else {
+            System.out.println("Condition not met for flipping stones.");
         }
 
         // Create the stone (circle) with a radius that fits within the hexagon
