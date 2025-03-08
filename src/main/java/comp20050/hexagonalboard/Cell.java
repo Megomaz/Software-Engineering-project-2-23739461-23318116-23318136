@@ -1,12 +1,15 @@
 package comp20050.hexagonalboard;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 
 public class Cell {
     private double x, y;  // Coordinates of the cell in the 2D grid
     private boolean occupied;  // Tracks if the cell is occupied
     private Player occupyingPlayer;  // The player occupying this cell
     private Color stoneColor;  // Color of the stone (RED or BLUE) in this cell
+    private Circle stone;
 
     // Constructor that initializes the coordinates and occupancy status
     public Cell(double x, double y) {
@@ -15,6 +18,7 @@ public class Cell {
         this.occupied = false;
         this.occupyingPlayer = null;  // Initially, the cell is not occupied
         this.stoneColor = null;  // No color initially
+        this.stone = null;
     }
 
     // Getter for x-coordinate
@@ -41,18 +45,35 @@ public class Cell {
         this.stoneColor = color;
     }
 
+    // Getter for the stone (Circle) in this cell
+    public Circle getStone() {
+        return stone;
+    }
+
+    // Setter for the stone (Circle)
+    public void setStone(Circle stone) {
+        this.stone = stone;
+    }
+
     // Method to clear the occupancy status
     public void clear() {
         this.occupied = false;
         this.occupyingPlayer = null;
         this.stoneColor = null;  // Clear the stone color when clearing the cell
+        this.stone = null;  // Remove the stone (Circle) when clearing the cell
     }
 
     // Method to occupy the cell with a player and set the stone color
-    public void occupy(Player player) {
+    public void occupy(Player player, Polygon hexagon) {
         this.occupied = true;
         this.occupyingPlayer = player;
         this.stoneColor = (player.getId() == 0) ? Color.RED : Color.BLUE;  // Set stone color based on player
+        // Create the stone (circle) and set its properties
+        this.stone = new Circle(24.5 / 2);  // Assuming HEX_RADIUS is 24.5, set radius as half
+        this.stone.setFill(this.stoneColor);
+        this.stone.setLayoutX(hexagon.getLayoutX());  // Position the stone at the cell's x-coordinate
+        this.stone.setLayoutY(hexagon.getLayoutY());  // Position the stone at the cell's y-coordinate
+
     }
 
     public Player getOccupyingPlayer() {

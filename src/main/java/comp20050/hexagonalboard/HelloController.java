@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import java.util.*;
 
@@ -140,11 +139,12 @@ public class HelloController {
                 // If the current cell has the opponent's color, flip it
                 if (currentCheckingCell.isOccupied()) {
                     if (stoneColor == Color.RED && currentCheckingCell.getStoneColor() == Color.BLUE) {
-                        currentCheckingCell.occupy(currentPlayer);
+                        currentCheckingCell.getStone().setFill(Color.RED);
+                        currentCheckingCell.occupy(currentPlayer, hexagon);
                         System.out.println("You have captured " + blueCount + " blue stones");
                         System.out.println("Flipping blue stone at (" + currentCheckingCell.getX() + ", " + currentCheckingCell.getY() + ") to red.");
                     } else if (stoneColor == Color.BLUE && currentCheckingCell.getStoneColor() == Color.RED) {
-                        currentCheckingCell.occupy(currentPlayer);
+                        currentCheckingCell.getStone().setFill(Color.BLUE);
                         System.out.println("You have captured " + redCount + " red stones");
                         System.out.println("Flipping red stone at (" + currentCheckingCell.getX() + ", " + currentCheckingCell.getY() + ") to blue.");
                     }
@@ -153,10 +153,10 @@ public class HelloController {
 
             // Update counts after flipping stones
             if (stoneColor == Color.RED) {
-                redCount = redCount + blueCount;  // Red count increases by the number of flipped blue stones
+                redCount = redCount + blueCount + 1;  // Red count increases by the number of flipped blue stones
                 blueCount = 0;  // No blue stones left in adjacent cells
-            } else if (stoneColor == Color.BLUE) {
-                blueCount = blueCount + redCount;  // Blue count increases by the number of flipped red stones
+            } else{
+                blueCount = blueCount + redCount + 1;  // Blue count increases by the number of flipped red stones
                 redCount = 0;  // No red stones left in adjacent cells
             }
 
@@ -166,25 +166,19 @@ public class HelloController {
             System.out.println("Condition not met for flipping stones.");
         }
 
-        // Create the stone (circle) with a radius that fits within the hexagon
-        Circle stone = new Circle(HEX_RADIUS / 2); // Stone radius should be half of hexagon's radius
-        stone.setFill(stoneColor);
-        stone.setLayoutX(hexagon.getLayoutX());  // Align stone with hexagon's center
-        stone.setLayoutY(hexagon.getLayoutY());
-
-        // Add the stone to the hex board
-        hexBoardPane.getChildren().add(stone);
-
         System.out.println(cell.getCoordinate());
 
         // Print the adjacent cells
         System.out.println(board.getAdjacentCellsAsString(row, col));
 
         // Mark the cell as occupied
-        cell.occupy(currentPlayer);
+        cell.occupy(currentPlayer, hexagon);
 
         // Disable further clicks on this hexagon
         hexagon.setOnMouseClicked(null);
+
+        // Add the stone to the hex board
+        hexBoardPane.getChildren().add(cell.getStone());
 
         // Switch the player's turn
         currentTurn = (currentTurn + 1) % 2;
