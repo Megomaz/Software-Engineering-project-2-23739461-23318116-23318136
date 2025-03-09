@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import java.util.*;
 
@@ -22,6 +23,7 @@ public class HelloController {
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
     private int currentTurn = 0; // 0 for Red, 1 for Blue
     private Board board;
+    private Map<String, Circle> previewStones = new HashMap<>(); // Track preview stones for removal
 
     @FXML
     public void initialize() {
@@ -60,6 +62,19 @@ public class HelloController {
                     // Add event listener to handle turns & disable re-clicking
                     int finalId = id;
                     hexagon.setOnMouseClicked(event -> placeStone(hexagon, finalId, row, col));
+
+
+                    // Add event listeners to handle hover (stone preview)
+
+                    hexagon.setOnMouseEntered(event -> {previewMoves(hexagon, row, col);});
+
+
+
+
+                    // Hide the preview stone when mouse exits from previous cell
+                    hexagon.setOnMouseExited(event -> {clearPreview(hexagon, row, col);});
+
+
 
                     hexBoardPane.getChildren().add(hexagon);
 
@@ -119,6 +134,50 @@ public class HelloController {
         // Highlight valid cells after the turn is made
         // highlightValidCells(Player.PLAYERS[currentTurn]);
     }
+
+
+    private void previewMoves(Polygon hexagon, int row, int col){
+
+
+        Cell cell = board.getCell(row, col);
+
+        if (cell.isOccupied()) {
+            return;
+        }
+        // Check if preview stone already exists for this cell
+        String hexId = "hex-" + row + "-" + col;
+        if (!previewStones.containsKey(hexId)) {
+            // Create preview stone for the current player
+            Circle previewStone = new Circle(HEX_RADIUS / 2);
+            previewStone.setLayoutX(hexagon.getLayoutX());
+            previewStone.setLayoutY(hexagon.getLayoutY());
+            previewStone.setFill(Player.PLAYERS[currentTurn].getId() == 0 ? Color.RED : Color.BLUE);
+            previewStone.setVisible(true);
+
+
+            // Add preview stone to hexBoardPane
+            hexBoardPane.getChildren().add(previewStone);
+
+            // Store the reference of the preview stone for later removal
+            previewStones.put(hexId, previewStone);
+
+        }
+
+    }
+
+    private void clearPreview(Polygon hexagon, int row, int col) {
+        // Find the preview stone reference
+        String hexId = "hex-" + row + "-" + col;
+        Circle previewStone = previewStones.get(hexId);
+
+        // If preview stone exists, remove it
+        if (previewStone != null) {
+            hexBoardPane.getChildren().remove(previewStone);
+            previewStones.remove(hexId); // Clean up the map
+        }
+    }
+
+
 
     private boolean attemptCapture(int row, int col, Color stoneColor, Player currentPlayer, Polygon hexagon) {
         List<Cell> adjacentCells = board.getAdjacentCells(row, col);
