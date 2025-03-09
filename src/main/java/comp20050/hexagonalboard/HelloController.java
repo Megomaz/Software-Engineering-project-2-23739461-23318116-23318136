@@ -71,13 +71,13 @@ public class HelloController {
     }
 
     private void placeStone(Polygon hexagon, int hexId, int row, int col) {
-        // Avoid placing a stone on an already occupied hexagon
-        if (!Player.attemptPlaceStone(hexagon)) {
-            return; // Ignore if already clicked or has a stone
-        }
-
         // Get the cell from the board
         Cell cell = board.getCell(row, col);
+
+        // Avoid placing a stone on an already occupied hexagon
+        if (cell.isOccupied()) {
+            return; // Ignore if already clicked or has a stone
+        }
 
         // Get the current player
         Player currentPlayer = Player.PLAYERS[currentTurn];
@@ -109,9 +109,6 @@ public class HelloController {
         // Mark the cell as occupied
         cell.occupy(currentPlayer, hexagon);
 
-        // Disable further clicks on this hexagon
-        hexagon.setOnMouseClicked(null);
-
         // Add the stone to the hex board
         hexBoardPane.getChildren().add(cell.getStone());
 
@@ -128,9 +125,12 @@ public class HelloController {
         List<Cell> cellsToCheck = new ArrayList<>(adjacentCells);
         Set<Cell> visitedCells = new HashSet<>();
 
-        int redCount = 0;
-        int blueCount = 0;
+        int playerStoneCount = 0;  // Count of adjacent stones of player's color
+        int opponentStoneCount = 0; // Count of adjacent stones of opponent's color
 
+        Color opponentColor = (stoneColor == Color.RED) ? Color.BLUE : Color.RED;
+
+        // Traverse adjacent stones to determine capture
         while (!cellsToCheck.isEmpty()) {
             Cell currentCheckingCell = cellsToCheck.remove(0);
 
@@ -138,13 +138,19 @@ public class HelloController {
                 visitedCells.add(currentCheckingCell);
 
                 Color adjacentColor = currentCheckingCell.getStoneColor();
-                if (adjacentColor == Color.RED) {
-                    redCount++;
-                } else if (adjacentColor == Color.BLUE) {
-                    blueCount++;
+                if (adjacentColor == stoneColor) {
+                    // Increment player stone count for adjacent player stones
+                    playerStoneCount++;
+                } else if (adjacentColor == opponentColor) {
+                    // Increment opponent stone count for adjacent opponent stones
+                    opponentStoneCount++;
                 }
 
-                List<Cell> nextAdjacentCells = board.getAdjacentCells((int) currentCheckingCell.getX(), (int) currentCheckingCell.getY());
+                // Only add cells adjacent to the current cell for further checking
+                List<Cell> nextAdjacentCells = board.getAdjacentCells(
+                        (int) currentCheckingCell.getX(),
+                        (int) currentCheckingCell.getY()
+                );
                 for (Cell nextCell : nextAdjacentCells) {
                     if (!visitedCells.contains(nextCell)) {
                         cellsToCheck.add(nextCell);
@@ -153,23 +159,19 @@ public class HelloController {
             }
         }
 
-        if ((stoneColor == Color.RED && redCount + 1 >= blueCount && blueCount >= 1 && redCount >= 1) ||
-                (stoneColor == Color.BLUE && blueCount + 1 >= redCount && redCount >= 1 && blueCount >= 1)) {
-
+        // **Check if capture conditions are met based on counts**
+        if (playerStoneCount >= opponentStoneCount && opponentStoneCount >= 1) {
+            // If player has more adjacent stones than opponent, capture the opponent's stones
             for (Cell currentCheckingCell : visitedCells) {
-                if (currentCheckingCell.isOccupied()) {
-                    if (stoneColor == Color.RED && currentCheckingCell.getStoneColor() == Color.BLUE) {
-                        currentCheckingCell.getStone().setFill(Color.RED);
-                        currentCheckingCell.occupy(currentPlayer, hexagon);
-                    } else if (stoneColor == Color.BLUE && currentCheckingCell.getStoneColor() == Color.RED) {
-                        currentCheckingCell.getStone().setFill(Color.BLUE);
-                        currentCheckingCell.occupy(currentPlayer, hexagon);
-                    }
+                if (currentCheckingCell.isOccupied() && currentCheckingCell.getStoneColor() == opponentColor) {
+                    // Remove the stone from the UI
+                    hexBoardPane.getChildren().remove(currentCheckingCell.getStone());
+                    // Remove from the board state
+                    currentCheckingCell.clear();
                 }
             }
-
-            System.out.println("Captured stones. Red: " + redCount + ", Blue: " + blueCount);
-            return true;
+            System.out.println("Captured stones. Player Stones: " + playerStoneCount + ", Opponent Stones: " + opponentStoneCount);
+            return true; // Capture successful
         }
 
         return false; // No valid capture
