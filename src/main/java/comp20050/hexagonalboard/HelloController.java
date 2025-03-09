@@ -10,18 +10,21 @@ import java.util.*;
 public class HelloController {
 
     @FXML
-    private Pane hexBoardPane; // Pane where hexagons are drawn
+    Pane hexBoardPane; // Pane where hexagons are drawn
 
     @FXML
-    private Polygon hexPrototype; // Reference to the FXML hexagon template
+    Polygon hexPrototype; // Reference to the FXML hexagon template
 
     @FXML
-    private Label turnLabel; // Label for turn display
+    Label turnLabel; // Label for turn display
 
     private static final int GRID_RADIUS = 6; // Hex grid range
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
     private int currentTurn = 0; // 0 for Red, 1 for Blue
     private Board board;
+    private int redStoneCount = 0;
+    private int blueStoneCount = 0;
+
 
     @FXML
     public void initialize() {
@@ -108,6 +111,11 @@ public class HelloController {
 
         // Mark the cell as occupied
         cell.occupy(currentPlayer, hexagon);
+        if (this.getCurrentTurn() == 0) {
+            redStoneCount++;
+        } else {
+            blueStoneCount++;
+        }
 
         // Add the stone to the hex board
         hexBoardPane.getChildren().add(cell.getStone());
@@ -166,6 +174,11 @@ public class HelloController {
                 if (currentCheckingCell.isOccupied() && currentCheckingCell.getStoneColor() == opponentColor) {
                     // Remove the stone from the UI
                     hexBoardPane.getChildren().remove(currentCheckingCell.getStone());
+                    if (this.getCurrentTurn() == 1) {
+                        redStoneCount -= playerStoneCount;
+                    } else {
+                        blueStoneCount-= opponentStoneCount;
+                    }
                     // Remove from the board state
                     currentCheckingCell.clear();
                 }
@@ -204,6 +217,22 @@ public class HelloController {
     }
     */
 
+    public int getCurrentTurn() {
+        return currentTurn;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+
+
+    public int getBlueStoneCount() {
+        return blueStoneCount;
+    }
+    public int getRedStoneCount(){
+        return redStoneCount;
+    }
 
     /* TODO: Implement the logic to check for a winner.
     public boolean checkwin() {
