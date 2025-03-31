@@ -120,8 +120,11 @@ public class HelloController {
         // Add the stone to the hex board
         hexBoardPane.getChildren().add(cell.getStone());
 
-        // Switch the player's turn
-        currentTurn = (currentTurn + 1) % 2;
+        // Switch the player's turn if they have made a NCP move
+        if (!captured){
+            currentTurn = (currentTurn + 1) % 2;
+        }
+
         UIHandler.updateTurnIndicator(Player.PLAYERS[currentTurn], turnLabel);
 
         // Highlight valid cells after the turn is made
