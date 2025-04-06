@@ -62,19 +62,18 @@ public class HelloController {
 
 
                     // Add event listener to handle turns & disable re-clicking
-                    int finalId = id;
-                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, finalId, row, col));
+                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, row, col));
 
 
                     // Add event listeners to handle hover (stone preview)
 
-                    hexagon.setOnMouseEntered(event -> {previewMoves(hexagon, row, col);});
+                    hexagon.setOnMouseEntered(event -> previewMoves(hexagon, row, col));
 
 
 
 
                     // Hide the preview stone when mouse exits from previous cell
-                    hexagon.setOnMouseExited(event -> {clearPreview(hexagon, row, col);});
+                    hexagon.setOnMouseExited(event -> clearPreview(row, col));
 
 
 
@@ -87,7 +86,7 @@ public class HelloController {
         hexBoardPane.setRotate(90); // Rotate the board for better alignment
     }
 
-    private void placeStone(Polygon hexagon, int hexId, int row, int col) {
+    private void placeStone(Polygon hexagon, int row, int col) {
         // Get the cell from the board
         Cell cell = board.getCell(row, col);
 
@@ -106,12 +105,12 @@ public class HelloController {
         List<Cell> adjacentCells = board.getAdjacentCells(row, col);
 
         // Check if the move captures any stones
-        boolean captured = attemptCapture(row, col, stoneColor, currentPlayer, hexagon);
+        boolean captured = attemptCapture(row, col, stoneColor);
 
         // If no capture occurs, ensure the move is not adjacent to the same color
         if (!captured) {
-            for (Cell adjacent : adjacentCells) {
-                if (adjacent.isOccupied() && adjacent.getStoneColor() == stoneColor) {
+            for (Cell adjacentCell : adjacentCells) {
+                if (adjacentCell.isOccupied() && adjacentCell.getStoneColor() == stoneColor) {
                     System.out.println("Invalid move: You cannot place next to your own color without capturing.");
                     return; // Prevent placement if next to the same color without capturing
                 }
@@ -133,8 +132,7 @@ public class HelloController {
         currentTurn = (currentTurn + 1) % 2;
         UIHandler.updateTurnIndicator(Player.PLAYERS[currentTurn], turnLabel);
 
-        // Highlight valid cells after the turn is made
-        // highlightValidCells(Player.PLAYERS[currentTurn]);
+
     }
 
 
@@ -165,7 +163,7 @@ public class HelloController {
 
     }
 
-    private void clearPreview(Polygon hexagon, int row, int col) {
+    private void clearPreview(int row, int col) {
         // Find the preview stone reference
         String hexId = "hex-" + row + "-" + col;
         Circle previewStone = previewStones.get(hexId);
@@ -179,7 +177,7 @@ public class HelloController {
 
 
 
-    private boolean attemptCapture(int row, int col, Color stoneColor, Player currentPlayer, Polygon hexagon) {
+    private boolean attemptCapture(int row, int col, Color stoneColor) {
         List<Cell> adjacentCells = board.getAdjacentCells(row, col);
         List<Cell> cellsToCheck = new ArrayList<>(adjacentCells);
         Set<Cell> visitedCells = new HashSet<>();
@@ -242,30 +240,9 @@ public class HelloController {
         return new Point(q, r, -q - r, x + 600, y + 200);
     }
 
-    /*
-    // Method to highlight valid cells based on the current player
-    private void highlightValidCells(Player currentPlayer) {
-        for (int q = -GRID_RADIUS; q <= GRID_RADIUS; q++) {
-            for (int r = -GRID_RADIUS; r <= GRID_RADIUS; r++) {
-                int s = -q - r; // Hexagonal coordinate calculation
-                if (s >= -GRID_RADIUS && s <= GRID_RADIUS) {
-                    // Check if the current cell is valid for placement
-                    if (board.validatePlacement(q + GRID_RADIUS, r + GRID_RADIUS, currentPlayer)) {
-                        // Highlight the cell (e.g., change its border color or fill)
-                        Polygon hexagon = (Polygon) hexBoardPane.lookup("#hex-" + (q + GRID_RADIUS) + "-" + (r + GRID_RADIUS));
-                        if (hexagon != null) {
-                            hexagon.setStroke(Color.GREEN); // Highlight valid cells with green border
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
-
 
     /* TODO: Implement the logic to check for a winner.
-    public boolean checkwin() {
+    public boolean checkForWinner() {
         // This will be implemented later
     }
     */

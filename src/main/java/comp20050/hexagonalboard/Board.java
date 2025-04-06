@@ -1,12 +1,25 @@
 package comp20050.hexagonalboard;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import java.util.*;
 
 
 public class Board {
     private Cell[][] cells;
-    private static final int GRID_RADIUS = 6;
+
+    private static final Map<Integer, int[]> COLUMN_RANGES = Map.ofEntries(
+            Map.entry(12, new int[]{0, 6}),
+            Map.entry(11, new int[]{0, 7}),
+            Map.entry(10, new int[]{0, 8}),
+            Map.entry(9,  new int[]{0, 9}),
+            Map.entry(8,  new int[]{0, 10}),
+            Map.entry(7,  new int[]{0, 11}),
+            Map.entry(6,  new int[]{0, 12}),
+            Map.entry(5,  new int[]{1, 12}),
+            Map.entry(4,  new int[]{2, 12}),
+            Map.entry(3,  new int[]{3, 12}),
+            Map.entry(2,  new int[]{4, 12}),
+            Map.entry(1,  new int[]{5, 12}),
+            Map.entry(0,  new int[]{6, 12})
+    );
 
     public Board(int gridSize) {
         cells = new Cell[gridSize][gridSize];
@@ -28,35 +41,7 @@ public class Board {
         cells[row][col] = cell;
     }
 
-    /* TODO: Implement the logic to render the board.
-    public void renderBoard() {
-        // This will be implemented later
-    }
-    */
 
-    /*
-    public boolean validatePlacement(int row, int col, Player currentPlayer) {
-        // Check if the selected cell is already occupied
-        if (cells[row][col].isOccupied()) {
-            return false;  // Cannot place a stone on an already occupied cell
-        }
-
-        // Get the opponent's ID (opponent is the other player)
-        Player opponent = Player.PLAYERS[(currentPlayer.getId() + 1) % 2];
-
-        // Check adjacent cells for opponent's stones
-        for (Point adjacent : getAdjacentCells(row, col)) {
-            // Directly access the adjacent cell, check if it's occupied and if the opponent's stone is there
-            if (getCell(adjacent.q + GRID_RADIUS, adjacent.r + GRID_RADIUS).isOccupied() &&
-                    getCell(adjacent.q + GRID_RADIUS, adjacent.r + GRID_RADIUS).getOccupyingPlayer().getId() == opponent.getId()) {
-                return true;  // Valid placement (adjacent to opponent's stone)
-            }
-        }
-
-        // Return false if no adjacent opponent's stone found
-        return false;
-    }
-    */
 
     public List<Cell> getAdjacentCells(int row, int col) {
         List<Cell> adjacentCells = new ArrayList<>();
@@ -114,20 +99,11 @@ public class Board {
         return sb.toString();
     }
 
+
+
     // Method to check if the coordinate falls in range
     private boolean isInValidRange(int row, int col) {
-        return (row >= 0 && row <= 6 && col == 12) ||   // (0-6,12)
-                (row >= 0 && row <= 7 && col == 11) ||   // (0-7,11)
-                (row >= 0 && row <= 8 && col == 10) ||   // (0-8,10)
-                (row >= 0 && row <= 9 && col == 9)  ||   // (0-9,9)
-                (row >= 0 && row <= 10 && col == 8) ||   // (0-10,8)
-                (row >= 0 && row <= 11 && col == 7) ||   // (0-11,7)
-                (row >= 0 && row <= 12 && col == 6) ||   // (0-12,6)
-                (row >= 1 && row <= 12 && col == 5) ||   // (1-12,5)
-                (row >= 2 && row <= 12 && col == 4) ||   // (2-12,4)
-                (row >= 3 && row <= 12 && col == 3) ||   // (3-12,3)
-                (row >= 4 && row <= 12 && col == 2) ||   // (4-12,2)
-                (row >= 5 && row <= 12 && col == 1) ||   // (5-12,1)
-                (row >= 6 && row <= 12 && col == 0);     // (6-12,0)
+
+        return COLUMN_RANGES.containsKey(col) && row >= COLUMN_RANGES.get(col)[0]  && row <= COLUMN_RANGES.get(col)[1];
     }
 }
