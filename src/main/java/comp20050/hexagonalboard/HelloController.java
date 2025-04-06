@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import java.util.*;
 
@@ -22,8 +23,8 @@ public class HelloController {
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
     private int currentTurn = 0; // 0 for Red, 1 for Blue
     private Board board;
-    private int redStoneCount = 0;
-    private int blueStoneCount = 0;
+
+    private Map<String, Circle> previewStones = new HashMap<>(); // Track preview stones for removal
 
 
     @FXML
@@ -61,8 +62,14 @@ public class HelloController {
                     board.setCell(row, col, new Cell(row,col));
 
                     // Add event listener to handle turns & disable re-clicking
-                    int finalId = id;
-                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, finalId, row, col));
+                    hexagon.setOnMouseClicked(event -> placeStone(hexagon, row, col));
+
+                    // Add event listeners to handle hover (stone preview)
+
+                    hexagon.setOnMouseEntered(event -> previewMoves(hexagon, row, col));
+
+                    // Hide the preview stone when mouse exits from previous cell
+                    hexagon.setOnMouseExited(event -> clearPreview(row, col));
 
                     hexBoardPane.getChildren().add(hexagon);
 
@@ -73,7 +80,7 @@ public class HelloController {
         hexBoardPane.setRotate(90); // Rotate the board for better alignment
     }
 
-    private void placeStone(Polygon hexagon, int hexId, int row, int col) {
+    private void placeStone(Polygon hexagon, int row, int col) {
         // Get the cell from the board
         Cell cell = board.getCell(row, col);
 
@@ -92,12 +99,12 @@ public class HelloController {
         List<Cell> adjacentCells = board.getAdjacentCells(row, col);
 
         // Check if the move captures any stones
-        boolean captured = attemptCapture(row, col, stoneColor, currentPlayer, hexagon);
+        boolean captured = attemptCapture(row, col, stoneColor);
 
         // If no capture occurs, ensure the move is not adjacent to the same color
         if (!captured) {
-            for (Cell adjacent : adjacentCells) {
-                if (adjacent.isOccupied() && adjacent.getStoneColor() == stoneColor) {
+            for (Cell adjacentCell : adjacentCells) {
+                if (adjacentCell.isOccupied() && adjacentCell.getStoneColor() == stoneColor) {
                     System.out.println("Invalid move: You cannot place next to your own color without capturing.");
                     return; // Prevent placement if next to the same color without capturing
                 }
@@ -127,11 +134,52 @@ public class HelloController {
 
         UIHandler.updateTurnIndicator(Player.PLAYERS[currentTurn], turnLabel);
 
-        // Highlight valid cells after the turn is made
-        // highlightValidCells(Player.PLAYERS[currentTurn]);
+
     }
 
-    private boolean attemptCapture(int row, int col, Color stoneColor, Player currentPlayer, Polygon hexagon) {
+
+    private void previewMoves(Polygon hexagon, int row, int col){
+        Cell cell = board.getCell(row, col);
+
+        if (cell.isOccupied()) {
+            return;
+        }
+        // Check if preview stone already exists for this cell
+        String hexId = "hex-" + row + "-" + col;
+        if (!previewStones.containsKey(hexId)) {
+            // Create preview stone for the current player
+            Circle previewStone = new Circle(HEX_RADIUS / 2);
+            previewStone.setLayoutX(hexagon.getLayoutX());
+            previewStone.setLayoutY(hexagon.getLayoutY());
+            previewStone.setFill(Player.PLAYERS[currentTurn].getId() == 0 ? Color.RED : Color.BLUE);
+            previewStone.setVisible(true);
+
+            previewStone.setMouseTransparent(true);
+            // Add preview stone to hexBoardPane
+            hexBoardPane.getChildren().add(previewStone);
+
+            // Store the reference of the preview stone for later removal
+            previewStones.put(hexId, previewStone);
+
+        }
+
+    }
+
+    private void clearPreview(int row, int col) {
+        // Find the preview stone reference
+        String hexId = "hex-" + row + "-" + col;
+        Circle previewStone = previewStones.get(hexId);
+
+        // If preview stone exists, remove it
+        if (previewStone != null) {
+            hexBoardPane.getChildren().remove(previewStone);
+            previewStones.remove(hexId); // Clean up the map
+        }
+    }
+
+
+
+    private boolean attemptCapture(int row, int col, Color stoneColor) {
         List<Cell> adjacentCells = board.getAdjacentCells(row, col);
         List<Cell> cellsToCheck = new ArrayList<>(adjacentCells);
         Set<Cell> visitedCells = new HashSet<>();
@@ -199,46 +247,9 @@ public class HelloController {
         return new Point(q, r, -q - r, x + 600, y + 200);
     }
 
-    /*
-    // Method to highlight valid cells based on the current player
-    private void highlightValidCells(Player currentPlayer) {
-        for (int q = -GRID_RADIUS; q <= GRID_RADIUS; q++) {
-            for (int r = -GRID_RADIUS; r <= GRID_RADIUS; r++) {
-                int s = -q - r; // Hexagonal coordinate calculation
-                if (s >= -GRID_RADIUS && s <= GRID_RADIUS) {
-                    // Check if the current cell is valid for placement
-                    if (board.validatePlacement(q + GRID_RADIUS, r + GRID_RADIUS, currentPlayer)) {
-                        // Highlight the cell (e.g., change its border color or fill)
-                        Polygon hexagon = (Polygon) hexBoardPane.lookup("#hex-" + (q + GRID_RADIUS) + "-" + (r + GRID_RADIUS));
-                        if (hexagon != null) {
-                            hexagon.setStroke(Color.GREEN); // Highlight valid cells with green border
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
-
-    public int getCurrentTurn() {
-        return currentTurn;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-
-
-    public int getBlueStoneCount() {
-        return blueStoneCount;
-    }
-    public int getRedStoneCount(){
-        return redStoneCount;
-    }
 
     /* TODO: Implement the logic to check for a winner.
-    public boolean checkwin() {
+    public boolean checkForWinner() {
         // This will be implemented later
     }
     */
