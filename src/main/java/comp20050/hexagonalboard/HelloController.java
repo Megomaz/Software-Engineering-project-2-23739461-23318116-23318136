@@ -118,11 +118,7 @@ public class HelloController {
 
         // Mark the cell as occupied
         cell.occupy(currentPlayer, hexagon);
-        if (this.getCurrentTurn() == 0) {
-            redStoneCount++;
-        } else {
-            blueStoneCount++;
-        }
+
 
         // Add the stone to the hex board
         hexBoardPane.getChildren().add(cell.getStone());
@@ -225,11 +221,7 @@ public class HelloController {
                 if (currentCheckingCell.isOccupied() && currentCheckingCell.getStoneColor() == opponentColor) {
                     // Remove the stone from the UI
                     hexBoardPane.getChildren().remove(currentCheckingCell.getStone());
-                    if (this.getCurrentTurn() == 1) {
-                        redStoneCount -= playerStoneCount;
-                    } else {
-                        blueStoneCount-= opponentStoneCount;
-                    }
+
                     // Remove from the board state
                     currentCheckingCell.clear();
                 }
