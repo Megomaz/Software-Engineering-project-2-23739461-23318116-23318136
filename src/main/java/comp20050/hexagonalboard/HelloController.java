@@ -11,19 +11,21 @@ import java.util.*;
 public class HelloController {
 
     @FXML
-    private Pane hexBoardPane; // Pane where hexagons are drawn
+    Pane hexBoardPane; // Pane where hexagons are drawn
 
     @FXML
-    private Polygon hexPrototype; // Reference to the FXML hexagon template
+    Polygon hexPrototype; // Reference to the FXML hexagon template
 
     @FXML
-    private Label turnLabel; // Label for turn display
+    Label turnLabel; // Label for turn display
 
     private static final int GRID_RADIUS = 6; // Hex grid range
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
     private int currentTurn = 0; // 0 for Red, 1 for Blue
     private Board board;
+
     private Map<String, Circle> previewStones = new HashMap<>(); // Track preview stones for removal
+
 
     @FXML
     public void initialize() {
@@ -59,23 +61,15 @@ public class HelloController {
                     int col = r + GRID_RADIUS;
                     board.setCell(row, col, new Cell(row,col));
 
-
-
                     // Add event listener to handle turns & disable re-clicking
                     hexagon.setOnMouseClicked(event -> placeStone(hexagon, row, col));
-
 
                     // Add event listeners to handle hover (stone preview)
 
                     hexagon.setOnMouseEntered(event -> previewMoves(hexagon, row, col));
 
-
-
-
                     // Hide the preview stone when mouse exits from previous cell
                     hexagon.setOnMouseExited(event -> clearPreview(row, col));
-
-
 
                     hexBoardPane.getChildren().add(hexagon);
 
@@ -124,12 +118,20 @@ public class HelloController {
 
         // Mark the cell as occupied
         cell.occupy(currentPlayer, hexagon);
+        if (this.getCurrentTurn() == 0) {
+            redStoneCount++;
+        } else {
+            blueStoneCount++;
+        }
 
         // Add the stone to the hex board
         hexBoardPane.getChildren().add(cell.getStone());
 
-        // Switch the player's turn
-        currentTurn = (currentTurn + 1) % 2;
+        // Switch the player's turn if they have made a NCP move
+        if (!captured){
+            currentTurn = (currentTurn + 1) % 2;
+        }
+
         UIHandler.updateTurnIndicator(Player.PLAYERS[currentTurn], turnLabel);
 
 
@@ -223,6 +225,11 @@ public class HelloController {
                 if (currentCheckingCell.isOccupied() && currentCheckingCell.getStoneColor() == opponentColor) {
                     // Remove the stone from the UI
                     hexBoardPane.getChildren().remove(currentCheckingCell.getStone());
+                    if (this.getCurrentTurn() == 1) {
+                        redStoneCount -= playerStoneCount;
+                    } else {
+                        blueStoneCount-= opponentStoneCount;
+                    }
                     // Remove from the board state
                     currentCheckingCell.clear();
                 }

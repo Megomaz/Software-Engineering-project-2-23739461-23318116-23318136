@@ -1,4 +1,6 @@
-/*e comp20050.hexagonalboard;
+package comp20050.hexagonalboard;
+
+
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -8,11 +10,15 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
 
+
+import javax.sound.midi.SysexMessage;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class) // Enable custom ordering
 class HelloControllerTest extends ApplicationTest {
 
+    private static final int GRID_RADIUS = 6;
     private HelloController controller;
 
     @Override
@@ -38,7 +44,7 @@ class HelloControllerTest extends ApplicationTest {
     @Order(1)
     void testInitialState() {
         assertNotNull(controller.hexBoardPane, "Hex board pane should be initialized.");
-        assertEquals(0, HelloController.getCurrentTurn(), "Initial turn should be player 0 (Red).");
+        assertEquals(0, controller.getCurrentTurn(), "Initial turn should be player 0 (Red).");
 
     }
 
@@ -56,8 +62,8 @@ class HelloControllerTest extends ApplicationTest {
     void testUpdateTurnIndicator() {
 
 
-        controller.updateTurnIndicator();
-        assertEquals(Player.PLAYERS[HelloController.getCurrentTurn()].getName() + "'s Turn",
+        UIHandler.updateTurnIndicator(Player.PLAYERS[controller.getCurrentTurn()], controller.turnLabel);
+        assertEquals(Player.PLAYERS[controller.getCurrentTurn()].getName() + "'s Turn",
                 controller.turnLabel.getText(), "Turn label should match the current player's turn.");
 
 
@@ -73,29 +79,110 @@ class HelloControllerTest extends ApplicationTest {
         interact(() -> hexagon.getOnMouseClicked().handle(null));
 
         // Ensure turn is updated
-        assertEquals(1, HelloController.getCurrentTurn(), "Current turn should switch to player 1 (Blue).");
+        assertEquals(1, controller.getCurrentTurn(), "Current turn should switch to player 1 (Blue).");
 
-        // Verify hexagon color changes correctly
-        assertEquals(Color.RED, hexagon.getFill(), "First player's move should turn the hexagon red.");
 
         // Simulate second click
         Polygon hexagon2 = (Polygon) controller.hexBoardPane.getChildren().get(1);
         interact(() -> hexagon2.getOnMouseClicked().handle(null));
-        assertEquals(0, HelloController.getCurrentTurn(), "Current turn should switch back to player 0 (Red).");
+        assertEquals(0, controller.getCurrentTurn(), "Current turn should switch back to player 0 (Red).");
     }
 
+
+
+    @Test
+    void testPlaceStone(){
+        Polygon hexagon = (Polygon) controller.hexBoardPane.getChildren().get(5);
+        assertFalse(controller.getBoard().getCell(0, 11).isOccupied());
+        interact(() -> hexagon.getOnMouseClicked().handle(null));
+        assertTrue(controller.getBoard().getCell(0, 11).isOccupied());
+
+    }
+
+    @Test
+    // Test to see if occupied hexagon stays same colour after being pressed again
+    void testPlaceStoneOnOccupiedHexagon(){
+
+        Polygon hexagon = (Polygon) controller.hexBoardPane.getChildren().get(5);
+
+        interact(() -> hexagon.getOnMouseClicked().handle(null));
+        Color occupiedStoneColour = controller.getBoard().getCell(0, 11).getStoneColor();
+
+        interact(() -> hexagon.getOnMouseClicked().handle(null));
+        assertEquals(occupiedStoneColour , controller.getBoard().getCell(0, 11).getStoneColor());
+
+
+    }
+
+    @Test
+    // Test that a stone is not placed adjacent to the same colour stone when not capturing
+    void testPlaceStoneAdjacentWhenNotCapturing(){
+        Polygon hexagon = (Polygon) controller.hexBoardPane.getChildren().get(0);
+        interact(() -> hexagon.getOnMouseClicked().handle(null));
+
+
+        Polygon hexagon2 = (Polygon) controller.hexBoardPane.getChildren().get(25);
+        interact(() -> hexagon2.getOnMouseClicked().handle(null));
+
+
+        Polygon hexagon3 = (Polygon) controller.hexBoardPane.getChildren().get(1);
+        interact(() -> hexagon3.getOnMouseClicked().handle(null));
+        assertFalse(controller.getBoard().getCell(0, 7).isOccupied());
+
+
+
+
+    }
+
+
+    @Test
+    void testAttemptCapture(){
+
+        Polygon hexagon = (Polygon) controller.hexBoardPane.getChildren().get(0);
+        interact(() -> hexagon.getOnMouseClicked().handle(null));
+
+        Polygon hexagon2 = (Polygon) controller.hexBoardPane.getChildren().get(1);
+        System.out.println("Current turn " + controller.getCurrentTurn());
+        interact(() -> hexagon2.getOnMouseClicked().handle(null));
+
+
+
+        Polygon hexagon3 = (Polygon) controller.hexBoardPane.getChildren().get(2);
+        System.out.println("Current turn " + controller.getCurrentTurn());
+        System.out.println(controller.getBoard().getCell(0, 7).isOccupied());
+        assertTrue(controller.getBoard().getCell(0, 7).isOccupied());
+        interact(() -> hexagon3.getOnMouseClicked().handle(null));
+
+        System.out.println("Current turn " + controller.getCurrentTurn());
+
+        assertFalse(controller.getBoard().getCell(0, 7).isOccupied());
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+    /*
     @Test
     public void testHexagonCoordinatesAreStored() {
         // Simulate the user clicking on a specific hexagon, e.g., hexagon at (1, 1)
         int row = 1;
         int col = 1;
         Polygon hexagon = (Polygon) controller.hexBoardPane.getChildren().get(0);
+        Board board = new Board(GRID_RADIUS * 2 + 1);
 
         // Use interact() to simulate clicking the hexagon
         interact(() -> hexagon.getOnMouseClicked().handle(null));
 
         // Verify that the coordinates are stored correctly in the cell
-        Cell cell = controller.board.getCell(row, col);
+        Cell cell = board.getCell(row, col);
 
         // Assert that the stored coordinates match the expected ones
         assertEquals(cell.getCoordinate(), "(x, y)");  // Replace x, y with actual expected coordinates
@@ -103,7 +190,11 @@ class HelloControllerTest extends ApplicationTest {
         // Check that the cell is marked as occupied after the click
         assertTrue(cell.isOccupied());
     }
+     */
+
+
+
+
     
 
 }
-*/
