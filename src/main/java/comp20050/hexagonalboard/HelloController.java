@@ -239,6 +239,14 @@ public class HelloController {
         return new Point(q, r, -q - r, x + 600, y + 200);
     }
 
+    public int getCurrentTurn(){
+        return currentTurn;
+    }
+
+    public Board getBoard(){
+        return board;
+    }
+
 
     /* TODO: Implement the logic to check for a winner.
     public boolean checkForWinner() {
