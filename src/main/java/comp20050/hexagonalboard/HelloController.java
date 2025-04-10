@@ -152,7 +152,7 @@ public class HelloController {
             previewStone.setFill(Player.PLAYERS[currentTurn].getId() == 0 ? Color.RED : Color.BLUE);
             previewStone.setVisible(true);
 
-
+            previewStone.setMouseTransparent(true);
             // Add preview stone to hexBoardPane
             hexBoardPane.getChildren().add(previewStone);
 
