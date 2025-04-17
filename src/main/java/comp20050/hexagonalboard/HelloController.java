@@ -247,10 +247,31 @@ public class HelloController {
         return board;
     }
 
+    //TODO: Restart game (Spencer)
+    /*
+    A button to restart game at any point
+    public void restartGame(){
+
+    }
+     */
+
+    //TODO: (Maybe) Animations and Sound
+
+    //TODO: Tests
+
+    //TODO: Brush up on game logic
+
 
     /* TODO: Implement the logic to check for a winner.
     public boolean checkForWinner() {
-        // This will be implemented later
+        // Ignore first two moves of the game
+        // Have a count for each number of stones, decrement everytime a stone is captured
+        // When blue or red stones equal zero, end game
+        // When game ends, remove hexagonal board from screen and display a label with winner
+        // Under label, button for "Play Again" and "Exit"
+        // For "Exit" we close JavaFX window (stage.close())
+
+
     }
     */
 }
