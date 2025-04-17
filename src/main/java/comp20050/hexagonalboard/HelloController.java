@@ -259,7 +259,7 @@ public class HelloController {
 
     //TODO: Tests
 
-    //TODO: Brush up on game logic
+    //TODO: Brush up on game logic (99% sure it's right already)
 
 
     /* TODO: Implement the logic to check for a winner.
