@@ -1,6 +1,7 @@
 package comp20050.hexagonalboard;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -18,6 +19,9 @@ public class HelloController {
 
     @FXML
     Label turnLabel; // Label for turn display
+
+    @FXML
+    Button RestartButton;
 
     private static final int GRID_RADIUS = 6; // Hex grid range
     private static final double HEX_RADIUS = 24.5; // Distance from center to hex corners
@@ -72,6 +76,8 @@ public class HelloController {
                     hexagon.setOnMouseExited(event -> clearPreview(row, col));
 
                     hexBoardPane.getChildren().add(hexagon);
+
+
 
                     id++; // Increment the ID for the next hexagon
                 }
@@ -250,12 +256,24 @@ public class HelloController {
     }
 
     //TODO: Restart game (Spencer)
-    /*
-    A button to restart game at any point
-    public void restartGame(){
 
+    // A button to restart game at any point
+    public void restartGame() {
+        // Clear the hex board pane
+        hexBoardPane.getChildren().clear();
+
+        // Loop through all the cells on the board based on your grid size
+        for (int row = 0; row < board.cells.length; row++) {
+            for (int col = 0; col < board.cells[row].length; col++) {
+                // Get the cell from the board and clear it
+                Cell cell = board.getCell(row,col);
+                cell.clear();  // Call the clear method to reset the cell
+            }
+        }
+
+        initialize();
     }
-     */
+
 
     //TODO: (Maybe) Animations and Sound
 
