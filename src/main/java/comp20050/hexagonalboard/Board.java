@@ -3,7 +3,7 @@ import java.util.*;
 
 
 public class Board {
-    private Cell[][] cells;
+    protected Cell[][] cells;
 
     private static final Map<Integer, int[]> COLUMN_RANGES = Map.ofEntries(
             Map.entry(12, new int[]{0, 6}),
