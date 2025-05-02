@@ -67,16 +67,16 @@ public class Cell {
     public void occupy(Player player, Polygon hexagon) {
         this.occupied = true;
         this.occupyingPlayer = player;
-        this.stoneColor = (player.getId() == 0) ? Color.RED : Color.BLUE;  // Set stone color based on player
+        this.stoneColor = (player.getId() == 0) ? Color.RED : Color.BLUE;  // Sets the stone color based on player
 
         if (this.stone == null) {
-            // Create the stone only if it doesn't exist
-            this.stone = new Circle(24.5 / 2);  // Assuming HEX_RADIUS is 24.5
-            this.stone.setLayoutX(hexagon.getLayoutX());  // Position the stone at the cell's x-coordinate
-            this.stone.setLayoutY(hexagon.getLayoutY());  // Position the stone at the cell's y-coordinate
+            // Creates the stone only if it doesn't exist
+            this.stone = new Circle(24.5 / 2);  // As HEX_RADIUS is 24.5
+            this.stone.setLayoutX(hexagon.getLayoutX());  // Positions the stone at the cell's x-coordinate
+            this.stone.setLayoutY(hexagon.getLayoutY());  // Positions the stone at the cell's y-coordinate
         }
 
-        // Always update the color of the existing stone
+        // Visually updates the color of the existing stone
         this.stone.setFill(this.stoneColor);
     }
 

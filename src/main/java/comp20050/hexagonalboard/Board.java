@@ -41,69 +41,60 @@ public class Board {
         cells[row][col] = cell;
     }
 
-
-
+    // Returns a list of valid adjacent cells for a given position in a hexagonal grid
     public List<Cell> getAdjacentCells(int row, int col) {
-        List<Cell> adjacentCells = new ArrayList<>();
-
-        // Define possible adjacent cell positions in a hexagonal grid
-        int[][] directions = {
-                {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, -1}
-        };
-
-        for (int[] dir : directions) {
-            int newRow = row + dir[0];
-            int newCol = col + dir[1];
-
-            // Check if new position is within bounds
-            if (isInValidRange(newRow, newCol)) {
-                adjacentCells.add(getCell(newRow, newCol));
-            }
-        }
-
-        return adjacentCells;
+        return findValidAdjacentCells(row, col);
     }
 
+    // Returns a string representation of the valid adjacent cells and their coordinates
     public String getAdjacentCellsAsString(int row, int col) {
-        // Hexagonal grid direction offsets
-        int[][] directions = {
-                {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, -1}, {-1, 1}
-        };
+        List<Cell> adjacentCells = findValidAdjacentCells(row, col);
+        StringBuilder sb = new StringBuilder("Adjacent cells of the stone placed: ");
 
-        List<Cell> adjacentCells = new ArrayList<>();
-        StringBuilder sb = new StringBuilder("Adjacent cells: ");
-
-        // Loop through the directions and calculate adjacent cells
-        for (int[] dir : directions) {
-            int newRow = row + dir[0];
-            int newCol = col + dir[1];
-
-            // Only proceed if the coordinates are within the valid range
-            if (!isInValidRange(newRow, newCol)) {
-                continue; // Ignore coordinates that are not part of the valid range
-            }
-
-            // Check if within the bounds of the board
-            if (newRow >= 0 && newRow < cells.length && newCol >= 0 && newCol < cells[0].length) {
-                // If it's a valid adjacent cell, add it to the list and append the coordinates
-                adjacentCells.add(cells[newRow][newCol]);
-                sb.append(cells[newRow][newCol].getCoordinate()).append(" ");
-            }
-        }
-
-        // If no adjacent cells were found, output a message
+        // If no valid adjacent cells were found
         if (adjacentCells.isEmpty()) {
             sb.append("No valid adjacent cells.");
+        } else {
+            // Else we append the coordinates of each adjacent cell
+            for (Cell cell : adjacentCells) {
+                sb.append(cell.getCoordinate()).append(" ");
+            }
         }
 
-        return sb.toString();
+        return sb.toString().trim();
     }
 
+    // Method to return a list of valid adjacent cells based on hexagonal position
+    private List<Cell> findValidAdjacentCells(int row, int col) {
+        // Direction offsets for adjacent cells in a hexagonal grid
+        int[][] directions = {
+                {-1, 0}, {1, 0},
+                {0, -1}, {0, 1},
+                {-1, 1}, {1, -1}
+        };
 
+        List<Cell> result = new ArrayList<>();
 
-    // Method to check if the coordinate falls in range
+        // Loop through all possible adjacent positions
+        for (int[] dir : directions) {
+            int newRow = row + dir[0];
+            int newCol = col + dir[1];
+
+            // Check if the position is within valid bounds of the board and grid constraints
+            if (isInValidRange(newRow, newCol) &&
+                    newRow >= 0 && newRow < cells.length &&
+                    newCol >= 0 && newCol < cells[0].length) {
+                result.add(cells[newRow][newCol]);
+            }
+        }
+
+        return result;
+    }
+
+    // Checks whether the specified row and col falls within the defined valid range of our board
     private boolean isInValidRange(int row, int col) {
-
-        return COLUMN_RANGES.containsKey(col) && row >= COLUMN_RANGES.get(col)[0]  && row <= COLUMN_RANGES.get(col)[1];
+        return COLUMN_RANGES.containsKey(col)
+                && row >= COLUMN_RANGES.get(col)[0]
+                && row <= COLUMN_RANGES.get(col)[1];
     }
 }

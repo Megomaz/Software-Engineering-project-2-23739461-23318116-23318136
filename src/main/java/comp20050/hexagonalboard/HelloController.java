@@ -20,14 +20,11 @@ public class HelloController {
     @FXML
     Label turnLabel; // Label for turn display
 
-    @FXML private Label winnerLabel;
+    @FXML
+    private Label winnerLabel; // Label for the winner
 
     @FXML
-    Button RestartButton;
-
-
-    @FXML private Button exitButton;
-
+    Button RestartButton; // Button for restarting
 
     @FXML
     private void exitGame() {
@@ -73,54 +70,51 @@ public class HelloController {
                     hexagon.setLayoutX(hexPosition.x);
                     hexagon.setLayoutY(hexPosition.y);
 
-                    // Set a unique ID for the hexagon based on position
+                    // Sets a unique ID for the hexagon based on position
                     hexagon.setId("hex-" + id);
 
-                    // Create a Cell object and store it in the hexBoard array
+                    // Creates a Cell object and stores it in the hexBoard array
                     int row = q + GRID_RADIUS;
                     int col = r + GRID_RADIUS;
-                    board.setCell(row, col, new Cell(row,col));
+                    board.setCell(row, col, new Cell(row, col));
 
-                    // Add event listener to handle turns & disable re-clicking
+                    // An event listener to handle turns & disable re-clicking
                     hexagon.setOnMouseClicked(event -> placeStone(hexagon, row, col));
 
-                    // Add event listeners to handle hover (stone preview)
-
+                    // An event listeners to handle hover (stone preview)
                     hexagon.setOnMouseEntered(event -> previewMoves(hexagon, row, col));
 
-                    // Hide the preview stone when mouse exits from previous cell
+                    // Hides the preview stone when mouse exits from previous cell
                     hexagon.setOnMouseExited(event -> clearPreview(row, col));
 
                     hexBoardPane.getChildren().add(hexagon);
 
-
-
-                    id++; // Increment the ID for the next hexagon
+                    id++; // The ID is incremented for the next hexagon
                 }
             }
         }
-        hexBoardPane.setRotate(90); // Rotate the board for better alignment
+        hexBoardPane.setRotate(90); // The board is rotated for better alignment
     }
 
     private void placeStone(Polygon hexagon, int row, int col) {
-        // Get the cell from the board
+        // Gets the cell from the board
         Cell cell = board.getCell(row, col);
 
-        // Avoid placing a stone on an already occupied hexagon
+        // Prevents placing a stone on an already occupied hexagon
         if (cell.isOccupied()) {
             return; // Ignore if already clicked or has a stone
         }
 
-        // Get the current player
+        // Gets the current player
         Player currentPlayer = Player.PLAYERS[currentTurn];
 
-        // Set color based on the current player's turn
+        // Sets the color based on the current player's turn
         Color stoneColor = currentPlayer.getId() == 0 ? Color.RED : Color.BLUE;
 
-        // Get adjacent cells
+        // Gets the adjacent cells
         List<Cell> adjacentCells = board.getAdjacentCells(row, col);
 
-        // Check if the move captures any stones
+        // Checks if the move captures any stones
         boolean captured = attemptCapture(row, col, stoneColor);
 
         // If no capture occurs, ensure the move is not adjacent to the same color
@@ -140,7 +134,8 @@ public class HelloController {
 
         // Mark the cell as occupied
         cell.occupy(currentPlayer, hexagon);
-// Track stone count and moves
+
+        // Track stone count and moves
         if (currentPlayer.getId() == 0) {
             redStoneCount++;
             redMoves++;
@@ -149,12 +144,11 @@ public class HelloController {
             blueMoves++;
         }
 
-
         // Add the stone to the hex board
         hexBoardPane.getChildren().add(cell.getStone());
 
         // Switch the player's turn if they have made a NCP move
-        if (!captured){
+        if (!captured) {
             currentTurn = (currentTurn + 1) % 2;
         }
 
@@ -165,8 +159,7 @@ public class HelloController {
     }
 
 
-    private void previewMoves(Polygon hexagon, int row, int col){
-
+    private void previewMoves(Polygon hexagon, int row, int col) {
 
         Cell cell = board.getCell(row, col);
 
@@ -216,19 +209,19 @@ public class HelloController {
 
         Color opponentColor = (stoneColor == Color.RED) ? Color.BLUE : Color.RED;
 
-        // Traverse adjacent stones to determine capture
+        // Traverses the adjacent stones to determine capture
         while (!cellsToCheck.isEmpty()) {
-            Cell currentCheckingCell = cellsToCheck.remove(0);
+            Cell currentCheckingCell = cellsToCheck.removeFirst();
 
             if (!visitedCells.contains(currentCheckingCell) && currentCheckingCell.isOccupied()) {
                 visitedCells.add(currentCheckingCell);
 
                 Color adjacentColor = currentCheckingCell.getStoneColor();
                 if (adjacentColor == stoneColor) {
-                    // Increment player stone count for adjacent player stones
+                    // Increment the player's stone count for adjacent player stones
                     playerStoneCount++;
                 } else if (adjacentColor == opponentColor) {
-                    // Increment opponent stone count for adjacent opponent stones
+                    // Increment the opponent's stone count for adjacent opponent stones
                     opponentStoneCount++;
                 }
 
@@ -245,18 +238,18 @@ public class HelloController {
             }
         }
 
-        // **Check if capture conditions are met based on counts**
+        // Checks if capture conditions are met based on counts
         if (playerStoneCount >= opponentStoneCount && opponentStoneCount >= 1) {
-            // If player has more adjacent stones than opponent, capture the opponent's stones
+            // If the player has more adjacent stones than the opponent, capture the opponent's stones
             for (Cell currentCheckingCell : visitedCells) {
                 if (currentCheckingCell.isOccupied() && currentCheckingCell.getStoneColor() == opponentColor) {
-                    // Remove the stone from the UI
+                    // Removes the stone from the UI
                     hexBoardPane.getChildren().remove(currentCheckingCell.getStone());
 
-                    // Remove from the board state
+                    // Removes the cell from the board state
                     currentCheckingCell.clear();
 
-                    // Decrement the opponent's stone count
+                    // Decrements the opponent's stone count
                     if (opponentColor == Color.RED) {
                         redStoneCount--;
                     } else {
@@ -267,14 +260,8 @@ public class HelloController {
             System.out.println("Captured stones. Player Stones: " + playerStoneCount + ", Opponent Stones: " + opponentStoneCount);
             return true; // Capture successful
         }
-
         return false; // No valid capture
     }
-
-
-
-
-    ///  end
 
     private Point calculateHexPixel(int q, int r) {
         double x = HEX_RADIUS * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
@@ -282,15 +269,13 @@ public class HelloController {
         return new Point(q, r, -q - r, x + 200, y + 200);
     }
 
-    public int getCurrentTurn(){
+    public int getCurrentTurn() {
         return currentTurn;
     }
 
-    public Board getBoard(){
+    public Board getBoard() {
         return board;
     }
-
-    //TODO: start game (Spencer)
 
     // A button to restart game at any point
     public void restartGame() {
@@ -300,7 +285,6 @@ public class HelloController {
         blueStoneCount = 0;
         redMoves = 0;
         blueMoves = 0;
-
 
         board = new Board(GRID_RADIUS * 2 + 1);
         hexBoardPane.getChildren().clear();
@@ -314,10 +298,8 @@ public class HelloController {
             winnerLabel.setVisible(false);
         }
 
-
         previewStones.clear();
     }
-
 
 
     public boolean checkForWinner() {
@@ -343,30 +325,6 @@ public class HelloController {
         // Show winner label and buttons
         winnerLabel.setText(winnerMessage);
         winnerLabel.setVisible(true);
-
-
     }
 
-
-
-
-
-    //TODO: (Maybe) Animations and Sound
-
-    //TODO: Tests
-
-    //TODO: Brush up on game logic (99% sure it's right already)
-
-
-    /* TODO: Implement the logic to check for a winner.
-    public boolean checkForWinner() {
-        // Ignore first two moves of the game
-        // Have a count for each number of stones, decrement everytime a stone is captured
-        // When blue or red stones equal zero, end game
-        // When game ends, remove hexagonal board from screen and display a label with winner
-        // Under label, button for "Play Again" and "Exit"
-        // For "Exit" we close JavaFX window (stage.close())
-
-
-    }
-    */
+}

@@ -13,20 +13,9 @@ public class Player {
             new Player("Blue", 1)
     };
 
-    /* TODO: Implement available moves logic later.
-    public List<Object> getAvailableMoves(Board board) {
-
-        return new ArrayList<>();
-    }
-    */
-
     public Player(String name, int id) {
         this.name = name;
         this.id = id;
-    }
-
-    public boolean isTurn(int currentTurn) {
-        return this.id == currentTurn;
     }
 
     public String getName() {
@@ -35,9 +24,5 @@ public class Player {
 
     public int getId() {
         return id;
-    }
-
-    public static boolean attemptPlaceStone(Polygon hexagon) {
-        return hexagon.getFill().equals(Color.web("#F1A300")); // Ignore if already clicked
     }
 }
