@@ -111,7 +111,6 @@ class HelloControllerTest extends ApplicationTest {
         interact(() -> hexagon.getOnMouseClicked().handle(null));
         assertEquals(occupiedStoneColour , controller.getBoard().getCell(0, 11).getStoneColor());
 
-
     }
 
     @Test
@@ -128,10 +127,6 @@ class HelloControllerTest extends ApplicationTest {
         Polygon hexagon3 = (Polygon) controller.hexBoardPane.getChildren().get(1);
         interact(() -> hexagon3.getOnMouseClicked().handle(null));
         assertFalse(controller.getBoard().getCell(0, 7).isOccupied());
-
-
-
-
     }
 
 
@@ -145,8 +140,6 @@ class HelloControllerTest extends ApplicationTest {
         System.out.println("Current turn " + controller.getCurrentTurn());
         interact(() -> hexagon2.getOnMouseClicked().handle(null));
 
-
-
         Polygon hexagon3 = (Polygon) controller.hexBoardPane.getChildren().get(2);
         System.out.println("Current turn " + controller.getCurrentTurn());
         System.out.println(controller.getBoard().getCell(0, 7).isOccupied());
@@ -158,43 +151,6 @@ class HelloControllerTest extends ApplicationTest {
         assertFalse(controller.getBoard().getCell(0, 7).isOccupied());
 
 
-
-
-
-
-
-
-
-
     }
-
-
-    /*
-    @Test
-    public void testHexagonCoordinatesAreStored() {
-        // Simulate the user clicking on a specific hexagon, e.g., hexagon at (1, 1)
-        int row = 1;
-        int col = 1;
-        Polygon hexagon = (Polygon) controller.hexBoardPane.getChildren().get(0);
-        Board board = new Board(GRID_RADIUS * 2 + 1);
-
-        // Use interact() to simulate clicking the hexagon
-        interact(() -> hexagon.getOnMouseClicked().handle(null));
-
-        // Verify that the coordinates are stored correctly in the cell
-        Cell cell = board.getCell(row, col);
-
-        // Assert that the stored coordinates match the expected ones
-        assertEquals(cell.getCoordinate(), "(x, y)");  // Replace x, y with actual expected coordinates
-
-        // Check that the cell is marked as occupied after the click
-        assertTrue(cell.isOccupied());
-    }
-     */
-
-
-
-
-    
 
 }
