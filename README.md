@@ -81,7 +81,7 @@ java --module-path /path/to/javafx-sdk/lib \
 
 * **Declan Chukwu** (23318136):
 
-All team members collaborated equally on planning, troubleshooting, and integration during the final sprint.
+All team members collaborated equally on planning, troubleshooting, and integration.
 
 ---
 
