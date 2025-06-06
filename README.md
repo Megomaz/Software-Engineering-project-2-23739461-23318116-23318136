@@ -70,7 +70,7 @@ java --module-path /path/to/javafx-sdk/lib \
 ---
 
 ## 🎥 Demo Video
-📽️ [Watch Gameplay Demo on Google Drive](https://github.com/user-attachments/assets/e23ee93e-8697-4e27-8d5a-38a0c18d18b5)
+📽️ [Watch Gameplay Demo](https://github.com/user-attachments/assets/e23ee93e-8697-4e27-8d5a-38a0c18d18b5)
 
 ## 👥 Team & Contributions
 
