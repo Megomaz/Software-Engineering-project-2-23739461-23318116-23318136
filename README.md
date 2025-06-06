@@ -3,8 +3,6 @@
 ---
 # 🧩 HexOust – Hexagonal Strategy Board Game
 
-**Repository:** [GitHub](https://github.com/Megomaz/Software-Engineering-project-2-23739461-23318116-23318136)
-
 ## 🎮 Overview
 
 **HexOust** is a two-player turn-based strategy board game implemented in Java using JavaFX. The game challenges players to place stones on a hexagonal grid while attempting to trap and eliminate the opponent’s stones. Players alternate turns until one side either loses all their pieces or the board is full.
