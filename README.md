@@ -35,7 +35,6 @@ This project was developed as a final assignment for UCD module Software Enginee
 | `Player`                      | Defines each player’s identity, color, and turn behavior               |
 | `Point`                       | Holds cube coordinates used to manage the hex grid layout              |
 | `UIHandler`                   | JavaFX class that handles rendering of board, stones, and UI elements  |
-| `ClickListener`               | Listens for mouse input to trigger stone placement                     |
 | `HelloControllerTest`         | JUnit test suite to validate board and game logic                      |
 
 ---
