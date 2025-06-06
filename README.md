@@ -71,6 +71,10 @@ java --module-path /path/to/javafx-sdk/lib \
 
 ---
 
+## 🎥 Demo Video
+
+📽️ [Watch Gameplay Demo on Google Drive](https://drive.google.com/file/d/1MbQOjloOrYjD93XBMlkPQdtdmPUcEY9N/view?usp=sharing)
+
 ## 👥 Team & Contributions
 
 **Group 42: Elite Three**
