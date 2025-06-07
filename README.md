@@ -9,9 +9,9 @@
 
 This project was developed as a final assignment for UCD module Software Engineering Project 2 (COMP20050) module by Group 42 – *Elite Three*.
 
-The project
----
+The project was divided up into 4 sprints and for each sprint we had a plan if the work needed to be done and what features to implement.
 
+---
 ## 🔧 Features
 
 - 🟥🟦 Two-player gameplay with color-coded turns (Red starts first)
