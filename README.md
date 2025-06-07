@@ -9,6 +9,7 @@
 
 This project was developed as a final assignment for UCD module Software Engineering Project 2 (COMP20050) module by Group 42 – *Elite Three*.
 
+The project
 ---
 
 ## 🔧 Features
