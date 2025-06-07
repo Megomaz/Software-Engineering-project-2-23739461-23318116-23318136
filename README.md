@@ -89,7 +89,7 @@ All team members collaborated equally on planning, troubleshooting, and integrat
 
 ## 🧪 Testing
 
-A comprehensive `HelloControllerTest` class is included to test:
+A comprehensive `HelloControllerTest` Unit test class is included to test:
 
 * Cell placement validation
 * Stone capture conditions
